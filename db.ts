@@ -9,16 +9,20 @@ export async function getDb() {
 
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    throw new Error('MONGODB_URI is not defined in the environment variables');
+    console.warn('MONGODB_URI is not defined. App will run with degraded functionality.');
+    return;
   }
 
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s
+    });
     isConnected = true;
     console.log('Successfully connected to MongoDB.');
   } catch (err) {
-    console.error('MongoDB connection error:', err);
-    throw err;
+    console.error('MongoDB connection error:', (err as Error).message);
+    console.warn('Continuing without MongoDB connection (Development Mode). Some features may not work.');
+    // We don't throw here to allow the server to start even if Atlas IP is not whitelisted
   }
 }
 

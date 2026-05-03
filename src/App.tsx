@@ -10,7 +10,9 @@ import { ContactPage } from './components/ContactPage';
 import { AIChatbot } from './components/AIChatbot';
 import { PGMapView } from './components/PGMapView';
 import { getNearByInsights } from './services/geminiService';
-import { Map, List, Navigation, Sparkles, MapPin, Hospital, Coffee, ShieldCheck, RefreshCw } from 'lucide-react';
+import { 
+  Map, List, Navigation, Sparkles, MapPin, Hospital, Coffee, ShieldCheck, RefreshCw 
+} from 'lucide-react';
 import { COLORS } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './contexts/AuthContext';
@@ -157,8 +159,6 @@ export default function App() {
       @keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
       .modal-enter { opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
       .modal-active { opacity: 1; transform: translateY(0); }
-      .pill-enter { transform: translateX(-50%) translateY(100px); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-      .pill-active { transform: translateX(-50%) translateY(0); }
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: ${COLORS.bg}; }
       ::-webkit-scrollbar-thumb { background: ${COLORS.border}; border-radius: 4px; }
@@ -374,6 +374,7 @@ export default function App() {
       <Hero 
         searchCity={searchCity} 
         setSearchCity={setSearchCity} 
+        isMobile={isMobile}
       />
 
       <FeatureStrip isMobile={isMobile} />
@@ -522,109 +523,107 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
   const [open, setOpen] = useState(false);
   
   return (
-    <nav className={`fixed top-0 w-full h-[72px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] z-[1000] flex items-center justify-between px-6 transition-all duration-300 ${scrolled ? 'shadow-md' : ''}`}>
-      <div className="text-2xl font-black text-[#1e293b]">
-        🏠 Stay<span className="text-[#ff7a00]">Finder</span>
-      </div>
-      
-      {/* Desktop Menu */}
-      <div className="hidden md:flex gap-8 items-center">
-        {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
-          <a key={l} href={`/#${l.toLowerCase().split(' ')[0]}`} className="nav-link" onClick={(e) => {
-            if (window.location.pathname !== '/') {
-              e.preventDefault();
-              window.history.pushState({}, '', '/');
-              window.dispatchEvent(new PopStateEvent('popstate'));
-              setTimeout(() => document.getElementById(l.toLowerCase().split(' ')[0])?.scrollIntoView(), 100);
-            }
-          }}>{l}</a>
-        ))}
-        <a href="/contact" className="nav-link" onClick={(e) => {
-          e.preventDefault();
-          window.history.pushState({}, '', '/contact');
-          window.dispatchEvent(new PopStateEvent('popstate'));
-          window.scrollTo(0, 0);
-        }}>Help</a>
-        <button onClick={onListClick} className="bg-[#ff7a00] text-white px-6 py-3 rounded-xl font-bold transition-all duration-200 shadow-[0_4px_12px_rgba(255,122,0,0.3)] hover:scale-105">List Your PG</button>
-        
-        {user ? (
-          <div className="flex items-center gap-3">
-            <div className="flex flex-col items-end">
-              <span className="text-sm font-bold text-[#1e293b]">{user.name}</span>
-              <span className="text-[10px] font-extrabold text-[#ff7a00] uppercase bg-[#FFF5EC] px-1.5 py-0.5 rounded">{user.role}</span>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-[#ff7a00] text-white flex items-center justify-center font-extrabold">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-            <button onClick={logout} className="bg-transparent border-none text-[#64748B] font-bold cursor-pointer ml-2">Logout</button>
+    <nav style={{ 
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+      background: scrolled ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(12px)' : 'none',
+      borderBottom: scrolled ? `1px solid ${COLORS.border}55` : 'none',
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      padding: scrolled ? '12px 20px' : '20px'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div 
+          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0, 0); }}
+          style={{ fontSize: '24px', fontWeight: 900, cursor: 'pointer', color: scrolled ? COLORS.dark : 'white', letterSpacing: '-0.02em' }}
+        >
+          STAY<span style={{ color: COLORS.orange }}>FINDER.</span>
+        </div>
+
+        {!isMobile && (
+          <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+            {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
+              <a 
+                key={l} 
+                href={l === 'Landlord Panel' ? '/dashboard' : '#'} 
+                onClick={(e) => {
+                  if (l === 'Landlord Panel') {
+                    e.preventDefault();
+                    window.history.pushState({}, '', '/dashboard');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }
+                }}
+                style={{ 
+                  color: scrolled ? COLORS.dark : 'white', textDecoration: 'none', 
+                  fontSize: '14px', fontWeight: 800, opacity: 0.8, transition: 'opacity 0.2s' 
+                }}
+                onMouseOver={e => e.currentTarget.style.opacity = '1'}
+                onMouseOut={e => e.currentTarget.style.opacity = '0.8'}
+              >
+                {l}
+              </a>
+            ))}
+            <button 
+              onClick={onListClick}
+              style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '10px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '13px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(255,122,0,0.2)' }}
+            >
+              List Your PG
+            </button>
+            
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: scrolled ? COLORS.bg : 'rgba(255,255,255,0.1)', padding: '6px 16px 6px 6px', borderRadius: '100px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: COLORS.orange, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '14px' }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: scrolled ? COLORS.dark : 'white' }}>{user.name.split(' ')[0]}</span>
+                  <button onClick={logout} style={{ background: 'none', border: 'none', color: COLORS.orange, padding: 0, fontSize: '10px', fontWeight: 800, textAlign: 'left', cursor: 'pointer' }}>Logout</button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={() => { window.history.pushState({}, '', '/auth'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+                style={{ background: scrolled ? COLORS.dark : 'white', color: scrolled ? 'white' : COLORS.dark, border: 'none', padding: '10px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+              >
+                Login
+              </button>
+            )}
           </div>
-        ) : (
-          <div className="flex gap-3">
-            <button onClick={() => {
-              window.history.pushState({}, '', '/auth');
-              window.dispatchEvent(new PopStateEvent('popstate'));
-            }} className="bg-transparent border-2 border-[#e2e8f0] text-[#1e293b] px-6 py-2.5 rounded-xl font-bold cursor-pointer hover:bg-gray-50 transition-colors">Login</button>
-            <button onClick={() => {
-              window.history.pushState({}, '', '/auth');
-              window.dispatchEvent(new PopStateEvent('popstate'));
-            }} className="bg-[#1e293b] border-none text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer hover:bg-gray-800 transition-colors">Sign Up</button>
-          </div>
+        )}
+
+        {isMobile && (
+          <button onClick={() => setOpen(!open)} style={{ background: 'none', border: 'none', color: scrolled ? COLORS.dark : 'white', fontSize: '24px', cursor: 'pointer' }}>
+            {open ? '✕' : '☰'}
+          </button>
         )}
       </div>
 
-      {/* Mobile Menu Button */}
-      <button onClick={() => setOpen(!open)} className="md:hidden bg-transparent border-none text-2xl cursor-pointer text-[#1e293b] z-[1001]">
-        {open ? '✕' : '☰'}
-      </button>
-
-      {/* Mobile Drawer */}
-      <div className={`md:hidden fixed top-[72px] right-0 w-full sm:w-80 h-[calc(100vh-72px)] bg-white p-6 flex flex-col gap-6 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] border-l border-[#e2e8f0] transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto z-[1000]`}>
-        {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
-          <a key={l} href={`/#${l.toLowerCase().split(' ')[0]}`} onClick={(e) => {
-            if (window.location.pathname !== '/') {
-              e.preventDefault();
-              window.history.pushState({}, '', '/');
-              window.dispatchEvent(new PopStateEvent('popstate'));
-              setTimeout(() => document.getElementById(l.toLowerCase().split(' ')[0])?.scrollIntoView(), 100);
-            }
-            setOpen(false);
-          }} className="text-[#1e293b] no-underline font-bold text-base py-2 border-b border-gray-100">{l}</a>
-        ))}
-        <a href="/contact" onClick={(e) => {
-          e.preventDefault();
-          window.history.pushState({}, '', '/contact');
-          window.dispatchEvent(new PopStateEvent('popstate'));
-          window.scrollTo(0, 0);
-          setOpen(false);
-        }} className="text-[#1e293b] no-underline font-bold text-base py-2 border-b border-gray-100">Help</a>
-        <button onClick={() => { onListClick(); setOpen(false); }} className="bg-[#ff7a00] text-white border-none p-3.5 rounded-xl font-bold text-base mt-2 min-h-[44px]">List Your PG</button>
-        
-        {user ? (
-          <div className="flex flex-col gap-3 mt-3">
-            <div className="flex items-center gap-3 bg-[#F8FAFC] p-3 rounded-xl">
-              <div className="w-9 h-9 rounded-full bg-[#ff7a00] text-white flex items-center justify-center font-extrabold">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-[#1e293b]">{user.name}</span>
-                <span className="text-[10px] font-extrabold text-[#ff7a00] uppercase">{user.role}</span>
-              </div>
-            </div>
-            <button onClick={() => { logout(); setOpen(false); }} className="bg-[#FEE2E2] text-[#DC2626] border-none p-3.5 rounded-xl font-bold text-base min-h-[44px]">Logout</button>
-          </div>
-        ) : (
-          <button onClick={() => {
-            window.history.pushState({}, '', '/auth');
-            window.dispatchEvent(new PopStateEvent('popstate'));
-            setOpen(false);
-          }} className="bg-[#F1F5F9] text-[#1e293b] border-none p-3.5 rounded-xl font-bold text-base mt-3 min-h-[44px]">Login / Signup</button>
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMobile && open && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            style={{ 
+              position: 'absolute', top: '100%', left: '20px', right: '20px', 
+              background: 'white', borderRadius: '24px', padding: '24px', 
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)', display: 'flex', 
+              flexDirection: 'column', gap: '20px', border: `1px solid ${COLORS.border}55` 
+            }}
+          >
+            {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
+              <a key={l} href="#" style={{ color: COLORS.dark, textDecoration: 'none', fontSize: '16px', fontWeight: 800 }}>{l}</a>
+            ))}
+            <button onClick={() => { onListClick(); setOpen(false); }} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px', borderRadius: '14px', fontWeight: 800, fontSize: '16px' }}>List Your PG</button>
+            <button onClick={() => { window.history.pushState({}, '', '/auth'); window.dispatchEvent(new PopStateEvent('popstate')); setOpen(false); }} style={{ background: COLORS.bg, color: COLORS.dark, border: 'none', padding: '16px', borderRadius: '14px', fontWeight: 800, fontSize: '16px' }}>Login / Signup</button>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </nav>
   );
 }
 
-function Hero({ searchCity, setSearchCity }: { searchCity: string, setSearchCity: (v: string) => void }) {
+function Hero({ searchCity, setSearchCity, isMobile }: { searchCity: string, setSearchCity: (v: string) => void, isMobile: boolean }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -679,103 +678,112 @@ function Hero({ searchCity, setSearchCity }: { searchCity: string, setSearchCity
   );
 
   return (
-    <header className="min-h-[auto] md:min-h-[85vh] bg-gradient-to-br from-[#1e293b] to-[#0f172a] text-white flex flex-col items-center justify-center pt-[120px] md:pt-[140px] px-6 pb-20 relative text-center md:text-left overflow-visible">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 30%, rgba(255,122,0,0.08) 0%, transparent 50%)' }} />
-      <div className="blur-orb" style={{ top: '-10%', left: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,122,0,0.15) 0%, transparent 70%)' }} />
-      <div className="blur-orb" style={{ bottom: '10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)' }} />
-      
-      <div className="max-w-[1200px] w-full mx-auto z-[2] flex flex-col items-center md:items-start">
-        <div className="max-w-[850px]">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-5 leading-tight tracking-tight">
+    <header style={{ 
+      background: `linear-gradient(135deg, ${COLORS.dark} 0%, #1e293b 100%)`, 
+      color: 'white', 
+      padding: '160px 20px 100px', 
+      position: 'relative', 
+      overflow: 'hidden',
+      textAlign: 'center'
+    }}>
+      {/* Background Decorative Orbs */}
+      <div className="blur-orb" style={{ top: '-10%', right: '-5%', width: '500px', height: '500px', background: COLORS.orange, opacity: 0.15, borderRadius: '50%', filter: 'blur(100px)', position: 'absolute' }} />
+      <div className="blur-orb" style={{ bottom: '10%', left: '-5%', width: '400px', height: '400px', background: '#3B82F6', opacity: 0.1, borderRadius: '50%', filter: 'blur(100px)', position: 'absolute' }} />
+
+      <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.1)', padding: '8px 16px', borderRadius: '100px', marginBottom: '32px', border: '1px solid rgba(255,255,255,0.2)' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 10px #10B981' }} />
+            <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '0.05em', color: 'white' }}>LIVE IN PUNE & PCMC</span>
+          </div>
+          <h1 style={{ fontSize: isMobile ? '40px' : '64px', fontWeight: 900, marginBottom: '24px', lineHeight: 1.1, letterSpacing: '-0.04em' }}>
             Find Your Perfect PG Near <br/>
-            <span className="text-[#ff7a00]">College or Workplace</span>
+            <span style={{ color: COLORS.orange, background: `linear-gradient(to right, ${COLORS.orange}, #fb923c)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              College or Workplace
+            </span>
           </h1>
-          <p className="text-base md:text-lg text-[#94A3B8] mb-0 font-medium leading-relaxed max-w-[550px]">
-            Verified listings. Smart comparison. Better decisions.
+          <p style={{ fontSize: isMobile ? '16px' : '20px', color: '#94A3B8', marginBottom: '48px', fontWeight: 500, maxWidth: '600px', margin: '0 auto 48px' }}>
+            India's most trusted student housing platform. Verified listings, smart comparison, and better living.
           </p>
-        </div>
+        </motion.div>
         
-        <div className="bg-white p-2 rounded-xl flex gap-1 w-full max-w-[900px] flex-col md:flex-row shadow-[0_20px_40px_rgba(0,0,0,0.15)] mt-12 border border-[#e2e8f0]">
-          <div className="flex-1 flex items-center bg-transparent rounded-lg px-5 border-none relative">
-            <span className="text-xl">🎓</span>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          style={{ 
+            background: 'rgba(255, 255, 255, 0.05)', 
+            backdropFilter: 'blur(12px)',
+            padding: '8px', 
+            borderRadius: '24px', 
+            display: 'flex', 
+            gap: '8px', 
+            maxWidth: '900px', 
+            margin: '0 auto',
+            flexDirection: isMobile ? 'column' : 'row',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+          }}
+        >
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '18px', padding: '0 20px', position: 'relative' }}>
+            <span style={{ fontSize: '20px' }}>🎓</span>
             <input 
               placeholder="Enter your college name" 
               value={searchQuery} 
-              onChange={e => {
-                setSearchQuery(e.target.value);
-                setShowSuggestions(true);
-              }}
+              onChange={e => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
               onFocus={() => setShowSuggestions(true)}
-              className="w-full border-none py-4 px-2 text-[15px] bg-transparent text-[#1e293b] outline-none font-medium"
+              style={{ flex: 1, border: 'none', padding: '18px 16px', background: 'transparent', color: 'white', outline: 'none', fontSize: '16px', fontWeight: 600 }}
             />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="bg-transparent border-none cursor-pointer text-[#94A3B8] px-2 text-sm"
-              >
-                ✕
-              </button>
-            )}
-
             {showSuggestions && searchQuery && (
-              <div className="absolute top-[calc(100%+12px)] left-0 w-full bg-white rounded-xl shadow-[0_15px_35px_rgba(0,0,0,0.15)] z-[100] max-h-[320px] overflow-y-auto border border-[#e2e8f0] p-2">
-                {filteredColleges.length > 0 ? (
-                  filteredColleges.map((c, i) => (
-                    <div 
-                      key={i} 
-                      onClick={() => {
-                        setSearchQuery(c.name);
-                        setSearchCity(c.name);
-                        setShowSuggestions(false);
-                      }}
-                      className="p-3.5 px-4 cursor-pointer rounded-xl transition-all duration-200 flex justify-between items-center mb-0.5 hover:bg-[#F1F5F9] hover:translate-x-1"
-                    >
-                      <span className="text-sm font-semibold text-[#1e293b]">{c.name}</span>
-                      <span className="text-[10px] font-extrabold text-[#64748B] bg-[#F1F5F9] px-2 py-1 rounded-md">{c.location}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-6 text-center text-[#64748B] text-sm font-semibold">
-                    No colleges found 🔍
+              <div style={{ position: 'absolute', top: 'calc(100% + 12px)', left: 0, width: '100%', background: 'white', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 100, overflow: 'hidden' }}>
+                {filteredColleges.length > 0 ? filteredColleges.map((c, i) => (
+                  <div key={i} onClick={() => { setSearchQuery(c.name); setSearchCity(c.name); setShowSuggestions(false); }} style={{ padding: '14px 20px', cursor: 'pointer', borderBottom: `1px solid ${COLORS.border}44`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: COLORS.dark }} onMouseOver={e => e.currentTarget.style.background = '#F8FAFC'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                    <span style={{ fontWeight: 700, fontSize: '14px' }}>{c.name}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, background: '#F1F5F9', padding: '4px 8px', borderRadius: '6px' }}>{c.location}</span>
                   </div>
-                )}
+                )) : <div style={{ padding: '20px', color: COLORS.text2, fontSize: '14px' }}>No colleges found 🔍</div>}
               </div>
             )}
           </div>
-
-          <div className="w-px h-[30px] bg-[#e2e8f0] self-center hidden md:block" />
-
-          <div className="flex-1 flex items-center bg-transparent rounded-lg px-5 border-none">
-            <span className="text-xl">📍</span>
+          {!isMobile && <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)', height: '40px', alignSelf: 'center' }} />}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '18px', padding: '0 20px' }}>
+            <span style={{ fontSize: '20px' }}>📍</span>
             <input 
-              placeholder="Search by area (e.g. Kothrud)" 
+              placeholder="Search by area" 
               value={searchCity} 
               onChange={e => setSearchCity(e.target.value)} 
-              className="w-full border-none py-4 px-2 text-[15px] bg-transparent text-[#1e293b] outline-none font-medium" 
+              style={{ flex: 1, border: 'none', padding: '18px 16px', background: 'transparent', color: 'white', outline: 'none', fontSize: '16px', fontWeight: 600 }} 
             />
           </div>
-
           <button 
             onClick={() => {
               if (searchQuery && !searchCity) setSearchCity(searchQuery);
               document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="bg-[#ff7a00] text-white border-none p-4 md:py-0 md:px-10 rounded-lg text-base font-extrabold cursor-pointer transition-all duration-200 h-auto md:h-[58px] whitespace-nowrap shadow-[0_4px_12px_rgba(255,122,0,0.3)] hover:scale-105 hover:bg-[#ff8a1a] w-full md:w-auto mt-2 md:mt-0"
+            style={{ background: COLORS.orange, color: 'white', border: 'none', padding: isMobile ? '16px' : '0 32px', borderRadius: '18px', fontWeight: 900, fontSize: '15px', cursor: 'pointer', transition: 'all 0.3s' }} 
+            onMouseOver={e => e.currentTarget.style.background = '#fb923c'} 
+            onMouseOut={e => e.currentTarget.style.background = COLORS.orange}
           >
             Search PGs
           </button>
-        </div>
+        </motion.div>
 
-
-        <div className="flex gap-6 md:gap-12 mt-10 md:mt-[60px] flex-wrap justify-center md:justify-start w-full">
-          {[ 
-            ['⭐ 4.6', 'Average Rating'], 
-            ['✔ 500+', 'Verified PGs'], 
-            ['👥 10K+', 'Students Joined'] 
-          ].map(([v, l]) => (
-            <div key={l}>
-              <p className="text-xl font-extrabold text-white">{v}</p>
-              <p className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">{l}</p>
+        <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'center', gap: isMobile ? '16px' : '32px', flexWrap: 'wrap' }}>
+          {[
+            { label: 'Verified PGs', value: '500+', icon: '✅' },
+            { label: 'Happy Students', value: '10K+', icon: '👥' },
+            { label: 'Cities Covered', value: '15+', icon: '🏙️' }
+          ].map(stat => (
+            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '20px' }}>{stat.icon}</span>
+              <div style={{ textAlign: 'left' }}>
+                <p style={{ fontSize: '18px', fontWeight: 900, color: 'white', margin: 0 }}>{stat.value}</p>
+                <p style={{ fontSize: '12px', fontWeight: 700, color: '#94A3B8', margin: 0 }}>{stat.label}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -784,16 +792,8 @@ function Hero({ searchCity, setSearchCity }: { searchCity: string, setSearchCity
   );
 }
 
-interface FiltersBarProps {
-  sharing: string;
-  setSharing: (v: string) => void;
-  budget: string;
-  setBudget: (v: string) => void;
-  verifiedOnly: boolean;
-  setVerifiedOnly: (v: boolean) => void;
-  sortBy: string;
-  setSortBy: (v: string) => void;
-}
+
+
 
 function FeatureStrip({ isMobile }: { isMobile: boolean }) {
   const features = [
@@ -1480,7 +1480,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
     }, 2000);
   };
 
-  const SidebarItem = ({ id, label, icon }: { id: LandlordTab, label: string, icon: string }) => (
+  const SidebarItem = ({ id, label, icon }: { id: LandlordTab, label: string, icon: React.ReactNode }) => (
     <button 
       onClick={() => setTab(id)}
       style={{
@@ -1490,8 +1490,8 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
         transition: 'all 0.2s', textAlign: 'left', marginBottom: '4px'
       }}
     >
-      <span style={{ fontSize: '18px' }}>{icon}</span>
-      {!isMobile && label}
+      <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>
+      {!isMobile && <span>{label}</span>}
     </button>
   );
 
@@ -1514,48 +1514,64 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
           {/* Sidebar */}
           <aside style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '8px', overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? '16px' : 0 }}>
             <SidebarItem id="dashboard" label="Overview" icon="📊" />
-            <SidebarItem id="listings" label="My Properties" icon="🏘️" />
-            <SidebarItem id="add" label="List New PG" icon="✨" />
+            <SidebarItem id="listings" label="My Properties" icon="🏢" />
+            <SidebarItem id="add" label="List New PG" icon="➕" />
             <SidebarItem id="bookings" label="Bookings" icon="📅" />
-            <SidebarItem id="payments" label="Financials" icon="💰" />
+            <SidebarItem id="payments" label="Financials" icon="💳" />
           </aside>
 
           {/* Main Workspace */}
           <div style={{ background: COLORS.white, borderRadius: '32px', padding: isMobile ? '24px' : '40px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
             {tab === 'dashboard' && (
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '20px', marginBottom: '48px' }}>
+              <div style={{ animation: 'fadeIn 0.5s ease' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>Performance Overview</h3>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: COLORS.text2, background: COLORS.bg, padding: '8px 16px', borderRadius: '12px', border: `1px solid ${COLORS.border}` }}>
+                    Last 30 Days
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px' }}>
                   {stats.map(s => (
-                    <div key={s.label} style={{ background: '#F8FAFC', padding: '24px', borderRadius: '24px', border: `1px solid ${COLORS.border}88` }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                        <span style={{ fontSize: '24px' }}>{s.icon}</span>
-                        <span style={{ fontSize: '11px', fontWeight: 800, color: '#10B981' }}>{s.trend}</span>
+                    <div key={s.label} style={{ 
+                      background: COLORS.white, padding: '24px', borderRadius: '24px', 
+                      border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                      display: 'flex', flexDirection: 'column', gap: '12px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: COLORS.orangeDim, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                          {s.label === 'Active Listings' ? '🏢' : s.label === 'Tenant Leads' ? '🏥' : s.label === 'Views (30d)' ? '👁️' : '💳'}
+                        </div>
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '4px 10px', borderRadius: '8px' }}>{s.trend}</span>
                       </div>
-                      <h4 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>{s.value}</h4>
-                      <p style={{ fontSize: '12px', color: COLORS.text2, fontWeight: 700, letterSpacing: '0.02em', textTransform: 'uppercase' }}>{s.label}</p>
+                      <div>
+                        <h4 style={{ fontSize: '28px', fontWeight: 900, color: COLORS.dark, marginBottom: '2px' }}>{s.value}</h4>
+                        <p style={{ fontSize: '13px', color: COLORS.text2, fontWeight: 700, letterSpacing: '0.02em', textTransform: 'uppercase' }}>{s.label}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.5fr', gap: '40px' }}>
-                  <div style={{ background: COLORS.dark, color: 'white', padding: '32px', borderRadius: '24px', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                      <h4 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px' }}>Boost Your Listings</h4>
-                      <p style={{ fontSize: '14px', color: '#94A3B8', marginBottom: '24px', lineHeight: 1.5 }}>Verified properties appear at the top of search results and gain 65% more trust.</p>
-                      <button style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '100px', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}>Apply for Verification</button>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.5fr 1fr', gap: '32px' }}>
+                  <div style={{ background: COLORS.dark, color: 'white', padding: '40px', borderRadius: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 40px rgba(15,23,42,0.2)' }}>
+                    <div style={{ position: 'relative', zIndex: 1, maxWidth: '340px' }}>
+                      <span style={{ background: COLORS.orange, color: 'white', fontSize: '11px', fontWeight: 900, padding: '6px 14px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'inline-block', marginBottom: '20px' }}>Pro Tip</span>
+                      <h4 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '16px', lineHeight: 1.2 }}>Boost Your Property Visibility by 3x</h4>
+                      <p style={{ fontSize: '15px', color: '#94A3B8', marginBottom: '32px', lineHeight: 1.6 }}>Physically verified properties earn the "Trust Seal" and appear at the top of all search results.</p>
+                      <button style={{ background: 'white', color: COLORS.dark, border: 'none', padding: '16px 32px', borderRadius: '16px', fontSize: '14px', fontWeight: 800, cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>Get Verified Now</button>
                     </div>
-                    <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '100px', opacity: 0.1, pointerEvents: 'none' }}>🛡️</div>
+                    <div style={{ position: 'absolute', top: '10%', right: '-5%', fontSize: '180px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-15deg)' }}>🛡️</div>
                   </div>
 
-                  <div>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '20px' }}>Partner Benefits</h4>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ background: COLORS.white, padding: '32px', borderRadius: '32px', border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+                    <h4 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', color: COLORS.dark }}>Partner Benefits</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                       {benefits.map(b => (
                         <div key={b.title} style={{ display: 'flex', gap: '16px' }}>
-                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: COLORS.orange, marginTop: '7px', flexShrink: 0 }} />
+                          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: COLORS.orange, marginTop: '6px', flexShrink: 0, boxShadow: `0 0 10px ${COLORS.orange}66` }} />
                           <div>
-                            <h5 style={{ fontSize: '14px', fontWeight: 800, color: COLORS.dark }}>{b.title}</h5>
-                            <p style={{ fontSize: '13px', color: COLORS.text2, lineHeight: 1.4 }}>{b.desc}</p>
+                            <h5 style={{ fontSize: '15px', fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{b.title}</h5>
+                            <p style={{ fontSize: '13px', color: COLORS.text2, lineHeight: 1.5 }}>{b.desc}</p>
                           </div>
                         </div>
                       ))}
@@ -1564,6 +1580,62 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                 </div>
               </div>
             )}
+
+            {tab === 'bookings' && (
+              <div style={{ animation: 'fadeIn 0.5s ease' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>Recent Bookings</h3>
+                </div>
+                {listings.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                    <p style={{ color: COLORS.text2, fontWeight: 600 }}>No active bookings found</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {listings.map((p, i) => (
+                      <div key={p.id} style={{ background: COLORS.white, borderRadius: '20px', padding: '24px', display: 'flex', alignItems: 'center', gap: '24px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                        <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: COLORS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
+                          📍
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <h4 style={{ fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{p.name}</h4>
+                          <p style={{ fontSize: '14px', color: COLORS.text2 }}>Tenant #{1000 + i} · Visit Scheduled</p>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 900, padding: '6px 12px', borderRadius: '8px', background: i % 2 === 0 ? '#FEF3C7' : '#DCFCE7', color: i % 2 === 0 ? '#D97706' : '#16A34A' }}>
+                            {i % 2 === 0 ? 'PENDING' : 'CONFIRMED'}
+                          </span>
+                          <p style={{ fontSize: '12px', color: COLORS.text2, marginTop: '8px', fontWeight: 600 }}>May {12 + i}, 2026</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {tab === 'payments' && (
+              <div style={{ animation: 'fadeIn 0.5s ease' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>Financial Portfolio</h3>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px', marginBottom: '40px' }}>
+                  {[
+                    { label: 'Gross Revenue', value: `₹${(listings.length * 8500).toLocaleString()}`, icon: '💳', color: '#F0F9FF', textColor: '#0369A1' },
+                    { label: 'Active Payouts', value: `₹${(listings.length * 6000).toLocaleString()}`, icon: '✅', color: '#F0FDF4', textColor: '#15803D' },
+                    { label: 'Receivables', value: `₹${(listings.length * 500).toLocaleString()}`, icon: '🔄', color: '#FFF7ED', textColor: '#C2410C' },
+                  ].map(item => (
+                    <div key={item.label} style={{ background: item.color, padding: '32px', borderRadius: '28px', border: `1px solid ${item.textColor}11` }}>
+                      <div style={{ color: item.textColor, marginBottom: '16px' }}>{item.icon}</div>
+                      <h4 style={{ fontSize: '32px', fontWeight: 900, color: COLORS.dark }}>{item.value}</h4>
+                      <p style={{ fontSize: '12px', fontWeight: 800, color: item.textColor, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '6px' }}>{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
 
             {tab === 'listings' && (
               <div>
@@ -2035,10 +2107,19 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
           <div />
           {pgs.map(pg => (
             <div key={pg.id} style={{ textAlign: 'center', position: 'relative' }}>
-              <div style={{ width: '100%', aspectRatio: '16/10', borderRadius: '20px', background: `linear-gradient(135deg, ${pg.colors[0]}, ${pg.colors[1]})`, marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>🏠</div>
-              <h4 style={{ fontSize: '18px', fontWeight: 900, color: COLORS.dark, marginBottom: '6px' }}>{pg.name}</h4>
+              <div style={{ 
+                width: '100%', aspectRatio: '16/10', borderRadius: '20px', 
+                background: `linear-gradient(135deg, ${pg.colors[0]}, ${pg.colors[1]})`, 
+                marginBottom: '16px', display: 'flex', alignItems: 'center', 
+                justifyContent: 'center', color: 'white', boxShadow: '0 10px 20px rgba(0,0,0,0.08)' 
+              }}>
+                <span style={{ fontSize: '40px' }}>
+                  {pg.gender === 'Girls' ? '🏠' : pg.gender === 'Boys' ? '🏢' : '🏡'}
+                </span>
+              </div>
+              <h4 style={{ fontSize: '16px', fontWeight: 900, color: COLORS.dark, marginBottom: '6px' }}>{pg.name}</h4>
               {pg.id === bestId && (
-                <div style={{ background: COLORS.orange, color: 'white', fontSize: '10px', fontWeight: 900, padding: '4px 12px', borderRadius: '100px', display: 'inline-block', letterSpacing: '0.05em' }}>BEST VALUE</div>
+                <div style={{ background: COLORS.orange, color: 'white', fontSize: '10px', fontWeight: 900, padding: '4px 12px', borderRadius: '100px', display: 'inline-block', letterSpacing: '0.05em', boxShadow: `0 4px 10px ${COLORS.orange}44` }}>BEST VALUE</div>
               )}
             </div>
           ))}
