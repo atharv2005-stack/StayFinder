@@ -203,7 +203,7 @@ export default function App() {
           colors: item.gender === 'Boys' ? ["#4FACFE", "#00F2FE"] : item.gender === 'Girls' ? ["#FF758C", "#FF7EB3"] : ["#43E97B", "#38F9D7"],
           coordinates: { lat: 18.6651 + (Math.random() - 0.5) * 0.02, lng: 73.8860 + (Math.random() - 0.5) * 0.02 }
         }));
-        setPGs(processedData);
+        setPgData(processedData);
       })
       .catch(err => {
         console.error(err);
@@ -212,7 +212,7 @@ export default function App() {
             id: '1', name: "Sai Krupa PG", address: "Alandi", rent: 7000, rating: 4.2, distance: 1, facilities: ["WiFi"], colors: ["#4FACFE", "#00F2FE"], coordinates: { lat: 18.6651, lng: 73.8860 }
           }
         ];
-        setPGs(dummyPGs as any);
+        setPgData(dummyPGs as any);
       });
   }, []);
 
@@ -434,9 +434,9 @@ export default function App() {
                   style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : '1fr 1fr 1fr', gap: '30px' }}
                 >
                   {loading ? Array(6).fill(0).map((_, i) => <SkeletonCard key={i} />) : 
-                    pgs && pgs.length > 0 ? (
+                    filteredPGs && filteredPGs.length > 0 ? (
                       <>
-                        {pgs.map(pg => (
+                        {filteredPGs.map(pg => (
                           <PGCard 
                             key={pg.id} 
                             pg={pg} 
@@ -545,27 +545,48 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
 
         {!isMobile && (
           <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Help'].map(l => (
-              <a 
-                key={l} 
-                href={l === 'Landlord Panel' ? '/dashboard' : '#'} 
-                onClick={(e) => {
-                  if (l === 'Landlord Panel') {
-                    e.preventDefault();
-                    window.history.pushState({}, '', '/dashboard');
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                  }
-                }}
-                style={{ 
-                  color: COLORS.dark, textDecoration: 'none', 
-                  fontSize: '15px', fontWeight: 700, opacity: 0.8, transition: 'opacity 0.2s' 
-                }}
-                onMouseOver={e => e.currentTarget.style.opacity = '1'}
-                onMouseOut={e => e.currentTarget.style.opacity = '0.8'}
-              >
-                {l}
-              </a>
-            ))}
+            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Help'].map(l => {
+              let href = '#';
+              if (l === 'Explore PGs') href = '#explore';
+              if (l === 'Roommate Matching') href = '#roommate';
+              if (l === 'Landlord Panel') href = '/dashboard';
+              if (l === 'Help') href = '/contact';
+
+              return (
+                <a 
+                  key={l} 
+                  href={href} 
+                  onClick={(e) => {
+                    if (l === 'Landlord Panel' || l === 'Help') {
+                      e.preventDefault();
+                      window.history.pushState({}, '', href);
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                      window.scrollTo(0, 0);
+                    } else if (l === 'Explore PGs' || l === 'Roommate Matching') {
+                      if (window.location.pathname !== '/') {
+                        e.preventDefault();
+                        window.history.pushState({}, '', '/');
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                        setTimeout(() => {
+                          document.getElementById(href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      } else {
+                        e.preventDefault();
+                        document.getElementById(href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }
+                  }}
+                  style={{ 
+                    color: COLORS.dark, textDecoration: 'none', 
+                    fontSize: '15px', fontWeight: 700, opacity: 0.8, transition: 'opacity 0.2s' 
+                  }}
+                  onMouseOver={e => e.currentTarget.style.opacity = '1'}
+                  onMouseOut={e => e.currentTarget.style.opacity = '0.8'}
+                >
+                  {l}
+                </a>
+              );
+            })}
             
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginLeft: '16px' }}>
               <button 
@@ -628,9 +649,44 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
               flexDirection: 'column', gap: '20px', border: `1px solid ${COLORS.border}55` 
             }}
           >
-            {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
-              <a key={l} href="#" style={{ color: COLORS.dark, textDecoration: 'none', fontSize: '16px', fontWeight: 800 }}>{l}</a>
-            ))}
+            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Help'].map(l => {
+              let href = '#';
+              if (l === 'Explore PGs') href = '#explore';
+              if (l === 'Roommate Matching') href = '#roommate';
+              if (l === 'Landlord Panel') href = '/dashboard';
+              if (l === 'Help') href = '/contact';
+
+              return (
+                <a 
+                  key={l} 
+                  href={href} 
+                  onClick={(e) => {
+                    setOpen(false);
+                    if (l === 'Landlord Panel' || l === 'Help') {
+                      e.preventDefault();
+                      window.history.pushState({}, '', href);
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                      window.scrollTo(0, 0);
+                    } else if (l === 'Explore PGs' || l === 'Roommate Matching') {
+                      if (window.location.pathname !== '/') {
+                        e.preventDefault();
+                        window.history.pushState({}, '', '/');
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                        setTimeout(() => {
+                          document.getElementById(href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      } else {
+                        e.preventDefault();
+                        document.getElementById(href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }
+                  }}
+                  style={{ color: COLORS.dark, textDecoration: 'none', fontSize: '16px', fontWeight: 800 }}
+                >
+                  {l}
+                </a>
+              );
+            })}
             <button onClick={() => { onListClick(); setOpen(false); }} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px', borderRadius: '14px', fontWeight: 800, fontSize: '16px' }}>List Your PG</button>
             <button onClick={() => { window.history.pushState({}, '', '/auth'); window.dispatchEvent(new PopStateEvent('popstate')); setOpen(false); }} style={{ background: COLORS.bg, color: COLORS.dark, border: 'none', padding: '16px', borderRadius: '14px', fontWeight: 800, fontSize: '16px' }}>Login / Signup</button>
           </motion.div>
@@ -960,8 +1016,8 @@ function FiltersBar({
       marginBottom: '40px', 
       padding: '24px',
       background: COLORS.white,
-      borderRadius: '16px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+      borderRadius: '12px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
       border: `1px solid ${COLORS.border}`,
       width: '100%',
     }}>
@@ -973,92 +1029,97 @@ function FiltersBar({
           placeholder="Search for PGs near MITAOE, Alandi, area or name..." 
           style={{ 
             width: '100%', 
-            padding: '18px 24px 18px 54px', 
-            borderRadius: '16px', 
+            padding: '16px 24px 16px 48px', 
+            borderRadius: '12px', 
             border: `1px solid ${COLORS.border}`, 
-            fontSize: '16px', 
-            fontWeight: 600, 
+            fontSize: '15px', 
+            fontWeight: 500, 
             background: '#F8FAFC', 
+            color: COLORS.dark,
             outline: 'none', 
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)' 
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' 
           }} 
         />
-        <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: COLORS.orange, fontSize: '20px' }}>🔍</div>
+        <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '20px' }}>🔍</div>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'flex-end' }}>
-        {/* Gender */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>GENDER</span>
-          <div style={{ display: 'flex', gap: '6px', background: '#F1F5F9', padding: '4px', borderRadius: '12px' }}>
-            {genders.map(g => (
-              <button 
-                key={g} 
-                onClick={() => setGenderFilter(g)} 
-                style={{ 
-                  padding: '8px 16px', borderRadius: '10px', 
-                  backgroundColor: genderFilter === g ? COLORS.dark : 'transparent',
-                  color: genderFilter === g ? 'white' : COLORS.text2,
-                  border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
-                }}
-              >
-                {g}
-              </button>
-            ))}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', flex: 2 }}>
+          {/* Gender */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', letterSpacing: '0.05em' }}>GENDER</span>
+            <div style={{ display: 'flex', gap: '4px', background: '#F8FAFC', padding: '4px', borderRadius: '10px', border: `1px solid ${COLORS.border}` }}>
+              {genders.map(g => (
+                <button 
+                  key={g} 
+                  onClick={() => setGenderFilter(g)} 
+                  style={{ 
+                    padding: '8px 16px', borderRadius: '8px', 
+                    backgroundColor: genderFilter === g ? '#0F172A' : 'transparent',
+                    color: genderFilter === g ? 'white' : '#475569',
+                    border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Room Type */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', letterSpacing: '0.05em' }}>ROOM TYPE</span>
+            <div style={{ display: 'flex', gap: '4px', background: '#F8FAFC', padding: '4px', borderRadius: '10px', border: `1px solid ${COLORS.border}` }}>
+              {roomTypes.map(r => (
+                <button 
+                  key={r} 
+                  onClick={() => setRoomTypeFilter(r)} 
+                  style={{ 
+                    padding: '8px 16px', borderRadius: '8px', 
+                    backgroundColor: roomTypeFilter === r ? '#0F172A' : 'transparent',
+                    color: roomTypeFilter === r ? 'white' : '#475569',
+                    border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Room Type */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>ROOM TYPE</span>
-          <div style={{ display: 'flex', gap: '6px', background: '#F1F5F9', padding: '4px', borderRadius: '12px' }}>
-            {roomTypes.map(r => (
-              <button 
-                key={r} 
-                onClick={() => setRoomTypeFilter(r)} 
-                style={{ 
-                  padding: '8px 16px', borderRadius: '10px', 
-                  backgroundColor: roomTypeFilter === r ? COLORS.dark : 'transparent',
-                  color: roomTypeFilter === r ? 'white' : COLORS.text2,
-                  border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
-                }}
-              >
-                {r}
-              </button>
-            ))}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', flex: 1, minWidth: '300px', alignItems: 'flex-end' }}>
+          {/* Price Slider */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', letterSpacing: '0.05em' }}>BUDGET</span>
+              <span style={{ fontSize: '14px', fontWeight: 800, color: '#FF7A00' }}>₹{priceRange[1].toLocaleString()}</span>
+            </div>
+            <input 
+              type="range" 
+              min="3500" 
+              max="15000" 
+              step="500" 
+              value={priceRange[1]}
+              onChange={e => setPriceRange([3500, parseInt(e.target.value)])}
+              style={{ width: '100%', accentColor: '#FF7A00', cursor: 'pointer', height: '6px' }} 
+            />
           </div>
-        </div>
 
-        {/* Price Slider */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>BUDGET</span>
-            <span style={{ fontSize: '13px', fontWeight: 800, color: COLORS.orange }}>₹{priceRange[1].toLocaleString()}</span>
+          {/* Sort */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '160px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', letterSpacing: '0.05em' }}>SORT BY</span>
+            <select 
+              value={sortBy} 
+              onChange={e => setSortBy(e.target.value)} 
+              style={{ 
+                padding: '10px 16px', borderRadius: '10px', border: `1px solid ${COLORS.border}`, background: '#F8FAFC', 
+                fontWeight: 700, fontSize: '13px', color: COLORS.dark, outline: 'none', cursor: 'pointer' 
+              }}
+            >
+              {sorts.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
           </div>
-          <input 
-            type="range" 
-            min="3500" 
-            max="15000" 
-            step="500" 
-            value={priceRange[1]}
-            onChange={e => setPriceRange([3500, parseInt(e.target.value)])}
-            style={{ width: '100%', accentColor: COLORS.orange, cursor: 'pointer' }} 
-          />
-        </div>
-
-        {/* Sort */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>SORT BY</span>
-          <select 
-            value={sortBy} 
-            onChange={e => setSortBy(e.target.value)} 
-            style={{ 
-              padding: '12px 16px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, background: '#F8FAFC', 
-              fontWeight: 700, fontSize: '13px', color: COLORS.dark, outline: 'none', cursor: 'pointer' 
-            }}
-          >
-            {sorts.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
         </div>
       </div>
     </div>
