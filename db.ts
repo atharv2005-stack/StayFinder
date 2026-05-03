@@ -1,0 +1,52 @@
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
+
+let isConnected = false;
+
+export async function getDb() {
+  if (isConnected) return;
+
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI is not defined in the environment variables');
+  }
+
+  try {
+    await mongoose.connect(uri);
+    isConnected = true;
+    console.log('Successfully connected to MongoDB.');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw err;
+  }
+}
+
+export interface IUser extends mongoose.Document {
+  id: string;
+  name: string;
+  email: string;
+  password?: string;
+  role?: string;
+  user_type?: string;
+  phone?: string;
+  profile_completed?: boolean;
+  profile_data?: any;
+}
+
+const userSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String },
+  role: { type: String },
+  user_type: { type: String },
+  phone: { type: String },
+  profile_completed: { type: Boolean, default: false },
+  profile_data: { type: mongoose.Schema.Types.Mixed }
+}, {
+  timestamps: true // Adds createdAt and updatedAt automatically
+});
+
+// Avoid OverwriteModelError if the model is already compiled
+export const User = (mongoose.models.User || mongoose.model<IUser>('User', userSchema)) as mongoose.Model<IUser>;

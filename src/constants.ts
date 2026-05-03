@@ -1,0 +1,15 @@
+export const COLORS = {
+  orange: '#FF7A00',
+  orangeLight: '#FFA34D',
+  orangeDim: 'rgba(255,122,0,0.08)',
+  dark: '#0F172A',
+  dark2: '#1E293B',
+  dark3: '#334155',
+  bg: '#F8FAFC',
+  white: '#FFFFFF',
+  text: '#0F172A',
+  text2: '#64748B',
+  border: '#E2E8F0',
+  success: '#10B981',
+  star: '#FFB800',
+};
