@@ -54,11 +54,12 @@ export function CompleteProfile() {
         if (role === 'tenant') {
           window.history.pushState({}, '', '/');
           window.dispatchEvent(new PopStateEvent('popstate'));
-          setTimeout(() => document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' }), 100);
+          setTimeout(() => {
+            document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' });
+          }, 500);
         } else {
-          window.history.pushState({}, '', '/');
+          window.history.pushState({}, '', '/dashboard');
           window.dispatchEvent(new PopStateEvent('popstate'));
-          setTimeout(() => document.getElementById('landlord')?.scrollIntoView({ behavior: 'smooth' }), 100);
         }
       } else {
         setError(data.error || 'Failed to update profile');

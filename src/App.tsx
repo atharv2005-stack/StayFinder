@@ -19,6 +19,7 @@ import { useAuth } from './contexts/AuthContext';
 import { AuthEntry } from './components/AuthEntry';
 import { AuthPage } from './components/AuthPage';
 import { CompleteProfile } from './components/CompleteProfile';
+import { ProfilePage } from './components/ProfilePage';
 
 import rawPgData from '../mitaoe_pg_listings.json';
 
@@ -179,7 +180,14 @@ export default function App() {
     
     // Load Local Storage
     const saved = localStorage.getItem('landlordPGs');
-    if (saved) setLandlordPGs(JSON.parse(saved));
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setLandlordPGs(parsed);
+      } catch (e) {
+        console.error("Local storage parse error:", e);
+      }
+    }
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -298,6 +306,17 @@ export default function App() {
     return <AuthPage mode="signup" role={role} />;
   }
 
+  if (currentPath === '/profile') {
+    return (
+      <div>
+        <Navbar scrolled={scrolled} isMobile={isMobile} onListClick={() => setShowListModal(true)} user={user} logout={logout} />
+        <div style={{ paddingTop: '100px', background: COLORS.bg, minHeight: '100vh' }}>
+          <ProfilePage />
+        </div>
+      </div>
+    );
+  }
+
   if (currentPath === '/complete-profile') {
     return (
       <div>
@@ -332,11 +351,6 @@ export default function App() {
   }
 
   if (currentPath === '/dashboard') {
-    if (!user || user.role !== 'landlord') {
-      window.history.pushState({}, '', '/login/landlord');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      return null;
-    }
     return (
       <div style={{ background: COLORS.bg, minHeight: '100vh' }}>
         <Navbar scrolled={scrolled} isMobile={isMobile} onListClick={() => setShowListModal(true)} user={user} logout={logout} />
@@ -599,13 +613,18 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
               </button>
               
               {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '6px 16px 6px 6px', borderRadius: '100px', border: `1px solid ${COLORS.border}` }}>
+                <div 
+                  onClick={() => { window.history.pushState({}, '', '/profile'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0, 0); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '6px 16px 6px 6px', borderRadius: '100px', border: `1px solid ${COLORS.border}`, cursor: 'pointer', transition: 'all 0.2s' }}
+                  onMouseOver={e => e.currentTarget.style.borderColor = COLORS.orange}
+                  onMouseOut={e => e.currentTarget.style.borderColor = COLORS.border}
+                >
                   <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: COLORS.orange, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '14px' }}>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '12px', fontWeight: 800, color: COLORS.dark }}>{user.name.split(' ')[0]}</span>
-                    <button onClick={logout} style={{ background: 'none', border: 'none', color: COLORS.orange, padding: 0, fontSize: '10px', fontWeight: 800, textAlign: 'left', cursor: 'pointer' }}>Logout</button>
+                    <span style={{ color: COLORS.orange, fontSize: '10px', fontWeight: 800, textAlign: 'left' }}>My Profile</span>
                   </div>
                 </div>
               ) : (
@@ -977,7 +996,12 @@ function LandlordPromo({ isMobile, onListClick }: { isMobile: boolean, onListCli
         <p style={{ fontSize: isMobile ? '16px' : '20px', opacity: 0.7, marginBottom: '40px', maxWidth: '700px', margin: '0 auto 40px' }}>Reach thousands of students actively searching for their next home. Verified listings get 3x more visibility.</p>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={onListClick} style={{ backgroundColor: COLORS.orange, color: 'white', border: 'none', padding: '16px 40px', borderRadius: '14px', fontSize: '16px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 10px 20px rgba(255,122,0,0.2)' }}>List Your PG Now</button>
-          <a href="#landlord" style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '16px 40px', borderRadius: '14px', fontSize: '16px', fontWeight: 800, textDecoration: 'none' }}>Landlord Dashboard</a>
+          <button 
+            onClick={() => { window.history.pushState({}, '', '/dashboard'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+            style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '16px 40px', borderRadius: '14px', fontSize: '16px', fontWeight: 800, cursor: 'pointer' }}
+          >
+            Landlord Dashboard
+          </button>
         </div>
       </div>
     </section>
@@ -1501,6 +1525,7 @@ interface LandlordSectionProps {
 type LandlordTab = 'dashboard' | 'listings' | 'add' | 'bookings' | 'payments' | 'profile';
 
 function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectionProps) {
+  const { user } = useAuth();
   const [tab, setTab] = useState<LandlordTab>('dashboard');
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<Partial<LandlordPG>>({
@@ -1623,7 +1648,16 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
               
               {tab === 'dashboard' && (
                 <div>
-                   <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark, marginBottom: '24px' }}>Overview</h3>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                     <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>
+                       {user ? `Welcome back, ${user.name.split(' ')[0]}!` : 'Partner Dashboard'}
+                     </h3>
+                     {!user && (
+                       <span style={{ padding: '6px 12px', background: COLORS.orangeDim, color: COLORS.orange, borderRadius: '8px', fontSize: '12px', fontWeight: 700 }}>
+                         Preview Mode
+                       </span>
+                     )}
+                   </div>
                    <div style={{ background: '#FFF3E0', padding: '32px', borderRadius: '20px', border: `1px solid #FFE0B2`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
                      <div>
                        <span style={{ background: COLORS.orange, color: 'white', fontSize: '10px', fontWeight: 900, padding: '4px 10px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', display: 'inline-block' }}>Boost Listing</span>
@@ -1669,8 +1703,17 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                             </div>
                           </div>
                           <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
-                            <button style={{ background: 'white', color: COLORS.dark, border: `1px solid ${COLORS.border}`, padding: '10px 20px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>Edit</button>
-                            <button onClick={() => onDelete(p.id)} style={{ background: '#FEF2F2', color: '#DC2626', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>Delete</button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: isMobile ? 0 : '8px' }}>
+                              <div style={{ width: '32px', height: '18px', background: p.status === 'Active' ? COLORS.success : '#CBD5E1', borderRadius: '100px', padding: '2px', cursor: 'pointer', transition: 'all 0.3s', display: 'flex', justifyContent: p.status === 'Active' ? 'flex-end' : 'flex-start' }} onClick={() => {/* Toggle logic */}}>
+                                <div style={{ width: '14px', height: '14px', background: 'white', borderRadius: '50%' }} />
+                              </div>
+                              <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2 }}>{p.status === 'Active' ? 'AVAILABLE' : 'HIDDEN'}</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button style={{ background: 'white', color: COLORS.dark, border: `1px solid ${COLORS.border}`, padding: '10px 16px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>View</button>
+                              <button style={{ background: 'white', color: COLORS.dark, border: `1px solid ${COLORS.border}`, padding: '10px 16px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>Edit</button>
+                              <button onClick={() => onDelete(p.id)} style={{ background: '#FEF2F2', color: '#DC2626', border: 'none', padding: '10px 16px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>Delete</button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -1843,13 +1886,24 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                                 <span style={{ padding: '6px 12px', background: 'white', border: `1px solid ${COLORS.border}`, borderRadius: '8px', fontSize: '13px', fontWeight: 700 }}>{form.gender}</span>
                               </div>
 
-                              <div style={{ borderTop: `1px solid ${COLORS.border}`, paddingTop: '24px' }}>
-                                <p style={{ fontSize: '13px', fontWeight: 800, color: COLORS.dark, marginBottom: '12px' }}>Amenities Included</p>
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                  {(form.facilities || []).map(f => (
-                                    <span key={f} style={{ fontSize: '12px', color: COLORS.text2, background: 'white', padding: '4px 10px', borderRadius: '100px', border: `1px solid ${COLORS.border}` }}>{f}</span>
-                                  ))}
-                                  {!(form.facilities || []).length && <span style={{ fontSize: '12px', color: COLORS.text2 }}>None selected</span>}
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', borderTop: `1px solid ${COLORS.border}`, paddingTop: '24px' }}>
+                                <div>
+                                  <p style={{ fontSize: '13px', fontWeight: 800, color: COLORS.dark, marginBottom: '12px' }}>Amenities Included</p>
+                                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                    {(form.facilities || []).map(f => (
+                                      <span key={f} style={{ fontSize: '12px', color: COLORS.text2, background: 'white', padding: '4px 10px', borderRadius: '100px', border: `1px solid ${COLORS.border}` }}>{f}</span>
+                                    ))}
+                                    {!(form.facilities || []).length && <span style={{ fontSize: '12px', color: COLORS.text2 }}>None selected</span>}
+                                  </div>
+                                </div>
+                                <div>
+                                  <p style={{ fontSize: '13px', fontWeight: 800, color: COLORS.dark, marginBottom: '12px' }}>Rules & Policies</p>
+                                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                    {(form.rules || []).map(r => (
+                                      <span key={r} style={{ fontSize: '12px', color: COLORS.text2, background: 'white', padding: '4px 10px', borderRadius: '100px', border: `1px solid ${COLORS.border}` }}>{r}</span>
+                                    ))}
+                                    {!(form.rules || []).length && <span style={{ fontSize: '12px', color: COLORS.text2 }}>Standard rules apply</span>}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1868,11 +1922,17 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
               )}
 
               {/* Bookings & Payments tabs placeholder for completeness */}
-              {(tab === 'bookings' || tab === 'payments' || tab === 'profile') && (
+              {(tab === 'bookings' || tab === 'payments') && (
                 <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-                  <div style={{ fontSize: '64px', marginBottom: '24px' }}>{tab === 'bookings' ? '📅' : tab === 'payments' ? '💳' : '👤'}</div>
+                  <div style={{ fontSize: '64px', marginBottom: '24px' }}>{tab === 'bookings' ? '📅' : '💳'}</div>
                   <h4 style={{ fontSize: '24px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>{tab.charAt(0).toUpperCase() + tab.slice(1)} Dashboard</h4>
                   <p style={{ color: COLORS.text2 }}>This section is currently under development.</p>
+                </div>
+              )}
+
+              {tab === 'profile' && (
+                <div style={{ background: 'white', borderRadius: '24px', border: `1px solid ${COLORS.border}55`, overflow: 'hidden' }}>
+                  <ProfilePage />
                 </div>
               )}
             </div>

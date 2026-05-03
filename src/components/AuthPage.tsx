@@ -40,7 +40,7 @@ export function AuthPage({ role, mode }: AuthPageProps) {
       if (res.ok) {
         login(data.token, data.user);
         const userRole = data.user.role || role;
-        const targetPath = userRole === 'tenant' ? '/explore' : '/dashboard';
+        const targetPath = !data.user.profile_completed ? '/complete-profile' : (userRole === 'tenant' ? '/explore' : '/dashboard');
         window.history.pushState({}, '', targetPath);
         window.dispatchEvent(new PopStateEvent('popstate'));
       } else {
@@ -67,7 +67,7 @@ export function AuthPage({ role, mode }: AuthPageProps) {
       if (res.ok) {
         login(data.token, data.user);
         const userRole = data.user.role || role;
-        const targetPath = userRole === 'tenant' ? '/explore' : '/dashboard';
+        const targetPath = !data.user.profile_completed ? '/complete-profile' : (userRole === 'tenant' ? '/explore' : '/dashboard');
         window.history.pushState({}, '', targetPath);
         window.dispatchEvent(new PopStateEvent('popstate'));
       } else {
