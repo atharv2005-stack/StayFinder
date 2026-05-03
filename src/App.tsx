@@ -1504,22 +1504,13 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
   const [tab, setTab] = useState<LandlordTab>('dashboard');
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<Partial<LandlordPG>>({
-    name: '', city: 'Pune', area: '', ownerName: '', phone: '', rent: 0, deposit: 0, sharing: 2, facilities: [], rules: [], gender: 'Boys', roomType: 'Private', status: 'Pending'
+    name: '', city: 'Pune', area: '', ownerName: '', phone: '', rent: 0, deposit: 0, sharing: 1, facilities: [], rules: [], gender: 'Boys', roomType: 'Private', status: 'Pending', availableFrom: ''
   });
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const stats = [
-    { label: 'Active Listings', value: listings.length, icon: '🏠', trend: '+12%', color: COLORS.orange },
-    { label: 'Tenant Leads', value: listings.length * 8, icon: '🎯', trend: '+5%', color: '#10B981' },
-    { label: 'Views (30d)', value: '1,240', icon: '👁️', trend: '+22%', color: '#3B82F6' },
-    { label: 'Est. Revenue', value: '₹45K', icon: '💰', trend: '+8%', color: '#F59E0B' },
-  ];
-
-  const benefits = [
-    { title: 'Maximum Visibility', desc: 'Reach 10,000+ students actively searching in your area.' },
-    { title: 'Verified Badge', desc: 'Trust increases bookings by 3x. Get your property verified today.' },
-    { title: 'Direct Management', desc: 'Manage leads, bookings, and payments from one dashboard.' }
-  ];
+  const inputStyle = { padding: '16px 20px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, fontSize: '15px', outline: 'none', background: '#F8FAFC', width: '100%', boxSizing: 'border-box' as 'border-box' };
+  const primaryBtnStyle = { background: COLORS.orange, color: 'white', border: 'none', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(255,122,0,0.1)' };
+  const secondaryBtnStyle = { background: 'white', color: COLORS.dark, border: `1px solid ${COLORS.border}`, fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s' };
 
   const handleNext = () => setStep(s => s + 1);
   const handlePrev = () => setStep(s => s - 1);
@@ -1538,7 +1529,8 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
       rating: 5.0,
       address: `${form.area}, ${form.city}`,
       contact: form.phone || '',
-      room_type: form.roomType || 'Private'
+      room_type: form.roomType || 'Private',
+      status: 'Active'
     };
     onAdd(newPG);
     setShowSuccess(true);
@@ -1546,7 +1538,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
       setShowSuccess(false);
       setTab('listings');
       setStep(1);
-      setForm({ name: '', city: 'Pune', area: '', ownerName: '', phone: '', rent: 0, deposit: 0, sharing: 2, facilities: [], rules: [], gender: 'Boys', roomType: 'Private', status: 'Pending' });
+      setForm({ name: '', city: 'Pune', area: '', ownerName: '', phone: '', rent: 0, deposit: 0, sharing: 1, facilities: [], rules: [], gender: 'Boys', roomType: 'Private', status: 'Pending', availableFrom: '' });
     }, 2000);
   };
 
@@ -1554,298 +1546,337 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
     <button 
       onClick={() => setTab(id)}
       style={{
-        display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 20px', borderRadius: '16px',
-        width: '100%', border: 'none', background: tab === id ? COLORS.orangeDim : 'transparent',
-        color: tab === id ? COLORS.orange : COLORS.text2, fontWeight: 700, cursor: 'pointer',
-        transition: 'all 0.2s', textAlign: 'left', marginBottom: '4px'
+        display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 20px', borderRadius: '12px',
+        width: '100%', border: 'none', background: tab === id ? '#FFF3E0' : 'transparent',
+        color: tab === id ? COLORS.orange : COLORS.text2, fontWeight: tab === id ? 800 : 600, cursor: 'pointer',
+        transition: 'all 0.2s', textAlign: 'left', marginBottom: '8px'
       }}
     >
-      <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>
+      <span style={{ display: 'flex', alignItems: 'center', fontSize: '18px' }}>{icon}</span>
       {!isMobile && <span>{label}</span>}
     </button>
   );
 
   return (
-    <section id="landlord" style={{ padding: '100px 0', background: COLORS.bg }}>
-      <div style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 20px' }}>
-        <div style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <div>
-            <h2 style={{ fontSize: '32px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>Landlord <span style={{ color: COLORS.orange }}>Partner Portal</span></h2>
-            <p style={{ color: COLORS.text2, fontWeight: 500 }}>Manage your properties and connect with verified tenants.</p>
-          </div>
-          {!isMobile && tab !== 'add' && (
-            <button onClick={() => setTab('add')} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '100px', fontWeight: 800, fontSize: '14px', cursor: 'pointer', boxShadow: '0 8px 16px rgba(255,122,0,0.2)' }}>
-              + Add New Property
-            </button>
-          )}
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '280px 1fr', gap: '40px' }}>
-          {/* Sidebar */}
-          <aside style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '8px', overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? '16px' : 0 }}>
-            <SidebarItem id="dashboard" label="Overview" icon="📊" />
-            <SidebarItem id="listings" label="My Properties" icon="🏢" />
-            <SidebarItem id="add" label="List New PG" icon="➕" />
-            <SidebarItem id="bookings" label="Bookings" icon="📅" />
-            <SidebarItem id="payments" label="Financials" icon="💳" />
+    <section id="landlord" style={{ background: '#F4F7FE', minHeight: '100vh', padding: isMobile ? '20px' : '40px' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '260px 1fr', gap: '32px' }}>
+          
+          {/* 1. LEFT SIDEBAR */}
+          <aside style={{ 
+            background: 'white', borderRadius: '24px', padding: '24px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+            height: isMobile ? 'auto' : 'calc(100vh - 80px)', position: isMobile ? 'static' : 'sticky', top: '40px',
+            display: 'flex', flexDirection: isMobile ? 'row' : 'column', overflowX: isMobile ? 'auto' : 'visible'
+          }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 900, color: COLORS.dark, marginBottom: isMobile ? 0 : '32px', display: isMobile ? 'none' : 'block' }}>
+              Partner <span style={{ color: COLORS.orange }}>Portal</span>
+            </h2>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', flex: 1, gap: isMobile ? '8px' : '0' }}>
+              <SidebarItem id="dashboard" label="Dashboard" icon="📊" />
+              <SidebarItem id="listings" label="My Listings" icon="🏢" />
+              <SidebarItem id="add" label="Add New PG" icon="➕" />
+              <SidebarItem id="bookings" label="Bookings" icon="📅" />
+              <SidebarItem id="payments" label="Payments" icon="💳" />
+              <SidebarItem id="profile" label="Profile" icon="👤" />
+            </div>
+            {!isMobile && (
+              <div style={{ marginTop: 'auto', background: '#F8FAFC', padding: '20px', borderRadius: '16px', border: `1px solid ${COLORS.border}` }}>
+                <p style={{ fontSize: '13px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>50,000+ tenants trust StayFinder</p>
+                <p style={{ fontSize: '12px', color: COLORS.text2 }}>Verified listings get 3x more visibility.</p>
+              </div>
+            )}
           </aside>
 
-          {/* Main Workspace */}
-          <div style={{ background: COLORS.white, borderRadius: '32px', padding: isMobile ? '24px' : '40px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
-            {tab === 'dashboard' && (
-              <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>Performance Overview</h3>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: COLORS.text2, background: COLORS.bg, padding: '8px 16px', borderRadius: '12px', border: `1px solid ${COLORS.border}` }}>
-                    Last 30 Days
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px' }}>
-                  {stats.map(s => (
-                    <div key={s.label} style={{ 
-                      background: COLORS.white, padding: '24px', borderRadius: '24px', 
-                      border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-                      display: 'flex', flexDirection: 'column', gap: '12px'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: COLORS.orangeDim, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-                          {s.label === 'Active Listings' ? '🏢' : s.label === 'Tenant Leads' ? '🏥' : s.label === 'Views (30d)' ? '👁️' : '💳'}
-                        </div>
-                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '4px 10px', borderRadius: '8px' }}>{s.trend}</span>
-                      </div>
-                      <div>
-                        <h4 style={{ fontSize: '28px', fontWeight: 900, color: COLORS.dark, marginBottom: '2px' }}>{s.value}</h4>
-                        <p style={{ fontSize: '13px', color: COLORS.text2, fontWeight: 700, letterSpacing: '0.02em', textTransform: 'uppercase' }}>{s.label}</p>
-                      </div>
+          {/* MAIN CONTENT AREA */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            
+            {/* 2. TOP SUMMARY (Stats Cards) */}
+            {(tab === 'dashboard' || tab === 'listings') && (
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '20px' }}>
+                {[
+                  { title: 'Total Listings', value: listings.length.toString(), icon: '🏢', color: '#E0E7FF' },
+                  { title: 'Active Tenants', value: (listings.length * 4).toString(), icon: '👥', color: '#DCFCE7' },
+                  { title: 'Monthly Earnings', value: `₹${(listings.length * 8500).toLocaleString()}`, icon: '💰', color: '#FEF3C7' },
+                  { title: 'Total Views', value: '1,204', icon: '👁️', color: '#FCE7F3' }
+                ].map(s => (
+                  <div key={s.title} style={{ 
+                    background: 'white', padding: '24px', borderRadius: '20px', 
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.02)', border: `1px solid ${COLORS.border}55`,
+                    display: 'flex', flexDirection: 'column', gap: '12px'
+                  }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                      {s.icon}
                     </div>
-                  ))}
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.5fr 1fr', gap: '32px' }}>
-                  <div style={{ background: COLORS.dark, color: 'white', padding: '40px', borderRadius: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 40px rgba(15,23,42,0.2)' }}>
-                    <div style={{ position: 'relative', zIndex: 1, maxWidth: '340px' }}>
-                      <span style={{ background: COLORS.orange, color: 'white', fontSize: '11px', fontWeight: 900, padding: '6px 14px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'inline-block', marginBottom: '20px' }}>Pro Tip</span>
-                      <h4 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '16px', lineHeight: 1.2 }}>Boost Your Property Visibility by 3x</h4>
-                      <p style={{ fontSize: '15px', color: '#94A3B8', marginBottom: '32px', lineHeight: 1.6 }}>Physically verified properties earn the "Trust Seal" and appear at the top of all search results.</p>
-                      <button style={{ background: 'white', color: COLORS.dark, border: 'none', padding: '16px 32px', borderRadius: '16px', fontSize: '14px', fontWeight: 800, cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>Get Verified Now</button>
+                    <div>
+                      <h4 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>{s.value}</h4>
+                      <p style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.title}</p>
                     </div>
-                    <div style={{ position: 'absolute', top: '10%', right: '-5%', fontSize: '180px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-15deg)' }}>🛡️</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* TAB CONTENT */}
+            <div style={{ background: 'white', borderRadius: '24px', padding: isMobile ? '24px' : '40px', boxShadow: '0 10px 40px rgba(0,0,0,0.03)', border: `1px solid ${COLORS.border}55`, minHeight: '60vh' }}>
+              
+              {tab === 'dashboard' && (
+                <div>
+                   <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark, marginBottom: '24px' }}>Overview</h3>
+                   <div style={{ background: '#FFF3E0', padding: '32px', borderRadius: '20px', border: `1px solid #FFE0B2`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
+                     <div>
+                       <span style={{ background: COLORS.orange, color: 'white', fontSize: '10px', fontWeight: 900, padding: '4px 10px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', display: 'inline-block' }}>Boost Listing</span>
+                       <h4 style={{ fontSize: '20px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>Get more bookings!</h4>
+                       <p style={{ color: COLORS.text2, fontSize: '14px' }}>Verified listings with professional photos get more visibility.</p>
+                     </div>
+                     <button style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer' }}>Boost Now</button>
+                   </div>
+                </div>
+              )}
+
+              {tab === 'listings' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>My Listings</h3>
+                    <button onClick={() => setTab('add')} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}>+ Add New</button>
                   </div>
 
-                  <div style={{ background: COLORS.white, padding: '32px', borderRadius: '32px', border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', color: COLORS.dark }}>Partner Benefits</h4>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                      {benefits.map(b => (
-                        <div key={b.title} style={{ display: 'flex', gap: '16px' }}>
-                          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: COLORS.orange, marginTop: '6px', flexShrink: 0, boxShadow: `0 0 10px ${COLORS.orange}66` }} />
-                          <div>
-                            <h5 style={{ fontSize: '15px', fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{b.title}</h5>
-                            <p style={{ fontSize: '13px', color: COLORS.text2, lineHeight: 1.5 }}>{b.desc}</p>
+                  {listings.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '80px 20px', background: '#F8FAFC', borderRadius: '20px', border: `1px dashed ${COLORS.border}` }}>
+                      <div style={{ fontSize: '64px', marginBottom: '24px' }}>🏢</div>
+                      <h4 style={{ fontSize: '20px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>You haven't added any PG yet</h4>
+                      <p style={{ color: COLORS.text2, marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>Start managing your properties efficiently and get leads directly from StayFinder.</p>
+                      <button onClick={() => setTab('add')} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px 32px', borderRadius: '12px', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 8px 16px rgba(255,122,0,0.2)' }}>Add Your First PG</button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
+                      {listings.map((p, idx) => (
+                        <div key={p.id} style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '24px', padding: '24px', border: `1px solid ${COLORS.border}`, borderRadius: '20px', alignItems: isMobile ? 'flex-start' : 'center' }}>
+                          <div style={{ width: isMobile ? '100%' : '140px', height: '100px', borderRadius: '12px', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', overflow: 'hidden' }}>
+                            {p.colors ? <div style={{ width: '100%', height: '100%', background: `linear-gradient(45deg, ${p.colors[0]}, ${p.colors[1]})` }} /> : '🏠'}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                              <h4 style={{ fontSize: '18px', fontWeight: 800, color: COLORS.dark }}>{p.name}</h4>
+                              <span style={{ fontSize: '10px', fontWeight: 900, background: '#DCFCE7', color: '#16A34A', padding: '4px 10px', borderRadius: '100px' }}>ACTIVE</span>
+                            </div>
+                            <p style={{ fontSize: '14px', color: COLORS.text2, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={14}/> {p.address}</p>
+                            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark, background: '#F1F5F9', padding: '6px 12px', borderRadius: '8px' }}>₹{p.rent}/mo</span>
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark, background: '#F1F5F9', padding: '6px 12px', borderRadius: '8px' }}>{p.sharing || 2} Sharing</span>
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark, background: '#F1F5F9', padding: '6px 12px', borderRadius: '8px' }}>{p.gender}</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
+                            <button style={{ background: 'white', color: COLORS.dark, border: `1px solid ${COLORS.border}`, padding: '10px 20px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>Edit</button>
+                            <button onClick={() => onDelete(p.id)} style={{ background: '#FEF2F2', color: '#DC2626', border: 'none', padding: '10px 20px', borderRadius: '10px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', flex: 1 }}>Delete</button>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {tab === 'bookings' && (
-              <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>Recent Bookings</h3>
-                </div>
-                {listings.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                    <p style={{ color: COLORS.text2, fontWeight: 600 }}>No active bookings found</p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {listings.map((p, i) => (
-                      <div key={p.id} style={{ background: COLORS.white, borderRadius: '20px', padding: '24px', display: 'flex', alignItems: 'center', gap: '24px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
-                        <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: COLORS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
-                          📍
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <h4 style={{ fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{p.name}</h4>
-                          <p style={{ fontSize: '14px', color: COLORS.text2 }}>Tenant #{1000 + i} · Visit Scheduled</p>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 900, padding: '6px 12px', borderRadius: '8px', background: i % 2 === 0 ? '#FEF3C7' : '#DCFCE7', color: i % 2 === 0 ? '#D97706' : '#16A34A' }}>
-                            {i % 2 === 0 ? 'PENDING' : 'CONFIRMED'}
-                          </span>
-                          <p style={{ fontSize: '12px', color: COLORS.text2, marginTop: '8px', fontWeight: 600 }}>May {12 + i}, 2026</p>
-                        </div>
+              {tab === 'add' && (
+                <div>
+                  {showSuccess ? (
+                    <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+                      <div style={{ fontSize: '80px', marginBottom: '24px', animation: 'bounce 1s infinite' }}>🎉</div>
+                      <h3 style={{ fontSize: '28px', fontWeight: 900, color: COLORS.dark, marginBottom: '12px' }}>Your PG has been listed successfully</h3>
+                      <p style={{ color: COLORS.text2, fontSize: '16px', marginBottom: '32px' }}>Tenants can now find your property on StayFinder.</p>
+                      <button onClick={() => setTab('listings')} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer' }}>View My Listings</button>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ marginBottom: '40px' }}>
+                        <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark, marginBottom: '8px' }}>Add New PG</h3>
+                        <p style={{ color: COLORS.text2, fontSize: '14px' }}>Complete the steps below to publish your property.</p>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                      
+                      {/* Stepper UI */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '48px', position: 'relative' }}>
+                        <div style={{ position: 'absolute', top: '16px', left: '10%', right: '10%', height: '2px', background: COLORS.border, zIndex: 0 }} />
+                        <div style={{ position: 'absolute', top: '16px', left: '10%', width: `${(step-1) * 25}%`, height: '2px', background: COLORS.orange, zIndex: 0, transition: 'width 0.3s' }} />
+                        <ProgressStep active={step >= 1} label="Basic Info" step={1} />
+                        <ProgressStep active={step >= 2} label="Details" step={2} />
+                        <ProgressStep active={step >= 3} label="Amenities" step={3} />
+                        <ProgressStep active={step >= 4} label="Photos" step={4} />
+                        <ProgressStep active={step >= 5} label="Publish" step={5} />
+                      </div>
 
-            {tab === 'payments' && (
-              <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>Financial Portfolio</h3>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px', marginBottom: '40px' }}>
-                  {[
-                    { label: 'Gross Revenue', value: `₹${(listings.length * 8500).toLocaleString()}`, icon: '💳', color: '#F0F9FF', textColor: '#0369A1' },
-                    { label: 'Active Payouts', value: `₹${(listings.length * 6000).toLocaleString()}`, icon: '✅', color: '#F0FDF4', textColor: '#15803D' },
-                    { label: 'Receivables', value: `₹${(listings.length * 500).toLocaleString()}`, icon: '🔄', color: '#FFF7ED', textColor: '#C2410C' },
-                  ].map(item => (
-                    <div key={item.label} style={{ background: item.color, padding: '32px', borderRadius: '28px', border: `1px solid ${item.textColor}11` }}>
-                      <div style={{ color: item.textColor, marginBottom: '16px' }}>{item.icon}</div>
-                      <h4 style={{ fontSize: '32px', fontWeight: 900, color: COLORS.dark }}>{item.value}</h4>
-                      <p style={{ fontSize: '12px', fontWeight: 800, color: item.textColor, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '6px' }}>{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-
-
-            {tab === 'listings' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '22px', fontWeight: 800 }}>Manage Properties ({listings.length})</h3>
-                </div>
-                {listings.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '80px 0' }}>
-                    <div style={{ fontSize: '64px', marginBottom: '24px' }}>🏘️</div>
-                    <h4 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>No Listings Yet</h4>
-                    <p style={{ color: COLORS.text2, marginBottom: '32px' }}>Start earning by listing your first property on StayFinder.</p>
-                    <button onClick={() => setTab('add')} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px 32px', borderRadius: '100px', fontWeight: 800, fontSize: '14px', cursor: 'pointer' }}>Get Started</button>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {listings.map(p => (
-                      <DashboardListingCard key={p.id} pg={p} onDelete={onDelete} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {tab === 'add' && (
-              <div style={{ maxWidth: '720px', margin: '0 auto' }}>
-                {showSuccess ? (
-                  <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                    <div style={{ fontSize: '80px', marginBottom: '24px', animation: 'bounce 1s infinite' }}>🎉</div>
-                    <h3 style={{ fontSize: '28px', fontWeight: 900, color: COLORS.dark, marginBottom: '12px' }}>Property Listed!</h3>
-                    <p style={{ color: COLORS.text2, fontSize: '16px' }}>Our verification team will review and activate it within 4 hours.</p>
-                  </div>
-                ) : (
-                  <>
-                    <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                      <h3 style={{ fontSize: '24px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>List Your Property</h3>
-                      <p style={{ color: COLORS.text2, fontSize: '14px' }}>Complete these simple steps to reach thousands of tenants.</p>
-                    </div>
-                    <StepIndicator current={step} />
-                    <form onSubmit={handleSubmit}>
-                      {step === 1 && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                          <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Owner Identification</p>
-                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                            <input required placeholder="Full Name" style={inputStyle} value={form.ownerName} onChange={e => setForm({...form, ownerName: e.target.value})} />
-                            <input required placeholder="Contact Number" style={inputStyle} value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+                      <form onSubmit={handleSubmit}>
+                        {step === 1 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>PG Name *</label>
+                                <input required placeholder="e.g. Zen Stays" style={inputStyle} value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Owner Name *</label>
+                                <input required placeholder="Full Name" style={inputStyle} value={form.ownerName} onChange={e => setForm({...form, ownerName: e.target.value})} />
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Contact Number *</label>
+                                <input required placeholder="10-digit mobile number" pattern="[0-9]{10}" style={inputStyle} value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>City *</label>
+                                <select style={inputStyle} value={form.city} onChange={e => setForm({...form, city: e.target.value})}>
+                                  <option>Pune</option><option>Mumbai</option><option>Bangalore</option><option>Hyderabad</option>
+                                </select>
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', gridColumn: '1 / -1' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Exact Location (Area/Street) *</label>
+                                <input required placeholder="e.g. Near MIT College, Alandi" style={inputStyle} value={form.area} onChange={e => setForm({...form, area: e.target.value})} />
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+                              <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>Next Step →</button>
+                            </div>
                           </div>
-                          <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Property Name & City</p>
-                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.5fr 1fr', gap: '16px' }}>
-                            <input required placeholder="Property Name (e.g. Zen Stays)" style={inputStyle} value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-                            <select style={inputStyle} value={form.city} onChange={e => setForm({...form, city: e.target.value})}>
-                              <option>Pune</option><option>Mumbai</option><option>Bangalore</option><option>Hyderabad</option>
-                            </select>
-                          </div>
-                          <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', marginTop: '12px' }}>Next: Pricing & Details →</button>
-                        </div>
-                      )}
-                      {step === 2 && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                          <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rental Structure</p>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        )}
+                        {step === 2 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Monthly Rent (₹) *</label>
+                                <input required type="number" min="0" placeholder="e.g. 8000" style={inputStyle} value={form.rent || ''} onChange={e => setForm({...form, rent: parseInt(e.target.value)})} />
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Security Deposit (₹) *</label>
+                                <input required type="number" min="0" placeholder="e.g. 15000" style={inputStyle} value={form.deposit || ''} onChange={e => setForm({...form, deposit: parseInt(e.target.value)})} />
+                              </div>
+                            </div>
+                            
+                            <PillGroup label="Sharing Type" options={['1 Sharing', '2 Sharing', '3 Sharing', '4 Sharing']} value={`${form.sharing} Sharing`} onChange={v => setForm({...form, sharing: parseInt(v.split(' ')[0])})} />
+                            <PillGroup label="Room Type" options={['Private', 'Semi-private', 'Dormitory']} value={form.roomType} onChange={v => setForm({...form, roomType: v as any})} />
+                            <PillGroup label="Gender Allowed" options={['Boys', 'Girls', 'Unisex']} value={form.gender} onChange={v => setForm({...form, gender: v as any})} />
+                            
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Monthly Rent (₹)</label>
-                              <input required type="number" style={inputStyle} value={form.rent} onChange={e => setForm({...form, rent: parseInt(e.target.value)})} />
+                              <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Available From</label>
+                              <input type="date" style={{ ...inputStyle, width: isMobile ? '100%' : '50%' }} value={form.availableFrom} onChange={e => setForm({...form, availableFrom: e.target.value})} />
                             </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+                              <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>← Back</button>
+                              <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>Next Step →</button>
+                            </div>
+                          </div>
+                        )}
+                        {step === 3 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                            <ChipSelector 
+                              label="Amenities" 
+                              options={['WiFi', 'AC', 'Food', 'Laundry', 'Parking', 'Gym', 'Cleaning']} 
+                              selected={form.facilities || []} 
+                              onChange={v => setForm({...form, facilities: v})} 
+                            />
+                            
+                            <ChipSelector 
+                              label="Rules" 
+                              options={['Smoking Allowed', 'No Smoking', 'Visitors Allowed', 'No Visitors']} 
+                              selected={form.rules || []} 
+                              onChange={v => setForm({...form, rules: v})} 
+                            />
+
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Security Deposit (₹)</label>
-                              <input required type="number" style={inputStyle} value={form.deposit} onChange={e => setForm({...form, deposit: parseInt(e.target.value)})} />
+                              <label style={{ fontSize: '13px', fontWeight: 700, color: COLORS.dark }}>Curfew Time</label>
+                              <input type="time" style={{ ...inputStyle, width: isMobile ? '100%' : '50%' }} />
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+                              <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>← Back</button>
+                              <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>Next Step →</button>
                             </div>
                           </div>
-                          <PillGroup label="Primary Room Type" options={['Private', 'Semi-private', 'Dormitory']} value={form.roomType} onChange={v => setForm({...form, roomType: v as any})} />
-                          <PillGroup label="Student Demographic" options={['Boys', 'Girls', 'Unisex']} value={form.gender} onChange={v => setForm({...form, gender: v as any})} />
-                          <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                            <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, borderRadius: '100px', flex: 1 }}>Back</button>
-                            <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Amenities & Photos →</button>
-                          </div>
-                        </div>
-                      )}
-                      {step === 3 && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                          <ChipSelector 
-                            label="Available Amenities" 
-                            options={['High-speed WiFi', 'AC Rooms', 'Attached Bathroom', '3 Meals Included', 'Gym & Fitness', '24/7 Security', 'Laundromat']} 
-                            selected={form.facilities || []} 
-                            onChange={v => setForm({...form, facilities: v})} 
-                          />
-                          <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Property Images</p>
-                          <div 
-                            style={{ 
-                              padding: '48px', border: `2px dashed ${COLORS.border}`, borderRadius: '24px', textAlign: 'center', background: '#F8FAFC', cursor: 'pointer', transition: 'border-color 0.2s' 
-                            }}
-                            onMouseOver={e => e.currentTarget.style.borderColor = COLORS.orange}
-                            onMouseOut={e => e.currentTarget.style.borderColor = COLORS.border}
-                          >
-                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
-                            <p style={{ fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>Upload Property Photos</p>
-                            <p style={{ fontSize: '12px', color: COLORS.text2 }}>Minimum 3 high-quality photos required.</p>
-                          </div>
-                          <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                            <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, borderRadius: '100px', flex: 1 }}>Back</button>
-                            <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Review & Publish →</button>
-                          </div>
-                        </div>
-                      )}
-                      {step === 4 && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                          <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Final Summary</p>
-                          <div style={{ background: '#F8FAFC', padding: '32px', borderRadius: '24px', border: `1px solid ${COLORS.border}` }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                        )}
+                        {step === 4 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, display: 'flex', gap: '12px', alignItems: 'center' }}>
+                              <span style={{ fontSize: '24px' }}>🛡️</span>
                               <div>
-                                <h4 style={{ fontWeight: 800, fontSize: '20px', marginBottom: '4px' }}>{form.name || 'Untitled Property'}</h4>
-                                <p style={{ fontSize: '13px', color: COLORS.text2 }}>{form.city} · {form.roomType}</p>
-                              </div>
-                              <div style={{ textAlign: 'right' }}>
-                                <p style={{ fontSize: '24px', fontWeight: 900, color: COLORS.orange }}>₹{form.rent?.toLocaleString()}</p>
-                                <p style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>PER MONTH</p>
+                                <h4 style={{ fontSize: '14px', fontWeight: 800, color: COLORS.dark }}>Trust Note</h4>
+                                <p style={{ fontSize: '13px', color: COLORS.text2 }}>Verified listings get 3x more visibility. High-quality photos increase bookings.</p>
                               </div>
                             </div>
-                            <div style={{ height: '1px', background: COLORS.border, margin: '20px 0' }} />
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                              <div>
-                                <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>Security Deposit</p>
-                                <p style={{ fontSize: '14px', fontWeight: 700 }}>₹{form.deposit?.toLocaleString()}</p>
-                              </div>
-                              <div>
-                                <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>Contact</p>
-                                <p style={{ fontSize: '14px', fontWeight: 700 }}>{form.phone}</p>
-                              </div>
+
+                            <div 
+                              style={{ 
+                                padding: '60px 20px', border: `2px dashed ${COLORS.border}`, borderRadius: '20px', textAlign: 'center', background: '#F8FAFC', cursor: 'pointer', transition: 'all 0.2s' 
+                              }}
+                              onMouseOver={e => { e.currentTarget.style.borderColor = COLORS.orange; e.currentTarget.style.background = '#FFF3E0'; }}
+                              onMouseOut={e => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.background = '#F8FAFC'; }}
+                            >
+                              <div style={{ fontSize: '48px', marginBottom: '16px' }}>📸</div>
+                              <p style={{ fontWeight: 800, color: COLORS.dark, marginBottom: '8px', fontSize: '16px' }}>Drag & drop images here</p>
+                              <p style={{ fontSize: '13px', color: COLORS.text2 }}>or click to browse from your device</p>
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+                              <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>← Back</button>
+                              <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, padding: '14px 32px', borderRadius: '12px' }}>Review Listing →</button>
                             </div>
                           </div>
-                          <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                            <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, borderRadius: '100px', flex: 1 }}>Back</button>
-                            <button type="submit" style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Submit Property for Approval</button>
+                        )}
+                        {step === 5 && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                            <div style={{ background: '#F8FAFC', padding: '32px', borderRadius: '24px', border: `1px solid ${COLORS.border}` }}>
+                              <h4 style={{ fontSize: '14px', fontWeight: 800, color: COLORS.text2, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '24px' }}>Listing Summary</h4>
+                              
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                                <div>
+                                  <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark, marginBottom: '8px' }}>{form.name || 'Untitled Property'}</h3>
+                                  <p style={{ fontSize: '14px', color: COLORS.text2, display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={14}/> {form.area}, {form.city}</p>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                  <p style={{ fontSize: '28px', fontWeight: 900, color: COLORS.orange }}>₹{form.rent?.toLocaleString()}</p>
+                                  <p style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2, textTransform: 'uppercase' }}>Per Month</p>
+                                </div>
+                              </div>
+                              
+                              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                                <span style={{ padding: '6px 12px', background: 'white', border: `1px solid ${COLORS.border}`, borderRadius: '8px', fontSize: '13px', fontWeight: 700 }}>{form.sharing} Sharing</span>
+                                <span style={{ padding: '6px 12px', background: 'white', border: `1px solid ${COLORS.border}`, borderRadius: '8px', fontSize: '13px', fontWeight: 700 }}>{form.roomType}</span>
+                                <span style={{ padding: '6px 12px', background: 'white', border: `1px solid ${COLORS.border}`, borderRadius: '8px', fontSize: '13px', fontWeight: 700 }}>{form.gender}</span>
+                              </div>
+
+                              <div style={{ borderTop: `1px solid ${COLORS.border}`, paddingTop: '24px' }}>
+                                <p style={{ fontSize: '13px', fontWeight: 800, color: COLORS.dark, marginBottom: '12px' }}>Amenities Included</p>
+                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                  {(form.facilities || []).map(f => (
+                                    <span key={f} style={{ fontSize: '12px', color: COLORS.text2, background: 'white', padding: '4px 10px', borderRadius: '100px', border: `1px solid ${COLORS.border}` }}>{f}</span>
+                                  ))}
+                                  {!(form.facilities || []).length && <span style={{ fontSize: '12px', color: COLORS.text2 }}>None selected</span>}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
+                              <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, padding: '16px 32px', borderRadius: '12px', flex: 1 }}>← Back</button>
+                              <button type="button" style={{ ...secondaryBtnStyle, padding: '16px 32px', borderRadius: '12px', flex: 1 }}>Save Draft</button>
+                              <button type="submit" style={{ ...primaryBtnStyle, padding: '16px 32px', borderRadius: '12px', flex: 2, fontSize: '16px' }}>Publish Listing</button>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </form>
-                  </>
-                )}
-              </div>
-            )}
+                        )}
+                      </form>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Bookings & Payments tabs placeholder for completeness */}
+              {(tab === 'bookings' || tab === 'payments' || tab === 'profile') && (
+                <div style={{ textAlign: 'center', padding: '80px 20px' }}>
+                  <div style={{ fontSize: '64px', marginBottom: '24px' }}>{tab === 'bookings' ? '📅' : tab === 'payments' ? '💳' : '👤'}</div>
+                  <h4 style={{ fontSize: '24px', fontWeight: 800, color: COLORS.dark, marginBottom: '8px' }}>{tab.charAt(0).toUpperCase() + tab.slice(1)} Dashboard</h4>
+                  <p style={{ color: COLORS.text2 }}>This section is currently under development.</p>
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       </div>
