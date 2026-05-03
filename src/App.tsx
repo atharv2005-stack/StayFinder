@@ -381,7 +381,7 @@ export default function App() {
       <section id="explore" style={{ padding: '80px 20px', background: COLORS.bg }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px' }}>
-            <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
+            <div className="text-center sm:text-left w-full sm:w-auto">
               <h2 style={{ fontSize: '36px', fontWeight: 800, color: COLORS.dark, marginBottom: '12px' }}>Recommended for You</h2>
               <p style={{ color: COLORS.text2, fontSize: '16px', fontWeight: 500 }}>Handpicked PGs based on reviews and amenities</p>
             </div>
@@ -430,7 +430,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : '1fr 1fr 1fr', gap: '30px' }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]"
                 >
                   {loading ? Array(6).fill(0).map((_, i) => <SkeletonCard key={i} />) : 
                     pgs && pgs.length > 0 ? (
@@ -830,7 +830,7 @@ function FeatureStrip({ isMobile }: { isMobile: boolean }) {
           <h2 style={{ fontSize: '32px', fontWeight: 800, color: COLORS.dark, marginBottom: '12px' }}>Why <span style={{ color: COLORS.orange }}>StayFinder?</span></h2>
           <p style={{ color: COLORS.text2, fontSize: '16px', maxWidth: '600px', margin: '0 auto' }}>We provide more than just a room. We provide a safe, convenient, and social living environment.</p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: '30px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-[30px]">
           {features.map(f => (
             <div 
               key={f.title} 
@@ -886,7 +886,7 @@ function HowItWorks({ isMobile }: { isMobile: boolean }) {
     <section style={{ padding: '100px 20px', backgroundColor: COLORS.white }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         <h2 style={{ fontSize: '36px', fontWeight: 800, marginBottom: '60px' }}>How StayFinder <span style={{ color: COLORS.orange }}>Works</span></h2>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: '40px', position: 'relative' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
           {steps.map((s, i) => (
             <div key={s.title} style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ fontSize: '48px', marginBottom: '24px' }}>{s.icon}</div>
@@ -908,8 +908,8 @@ function LandlordPromo({ isMobile, onListClick }: { isMobile: boolean, onListCli
     <section style={{ padding: '100px 20px', background: `linear-gradient(135deg, ${COLORS.dark} 0%, #1e293b 100%)`, color: 'white', overflow: 'hidden', position: 'relative' }}>
       <div className="blur-orb" style={{ top: '0', right: '0', width: '400px', height: '400px', background: COLORS.orange, opacity: 0.1 }} />
       <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-        <h2 style={{ fontSize: isMobile ? '28px' : '48px', fontWeight: 800, marginBottom: '16px' }}>List Your PG & Get <span style={{ color: COLORS.orange }}>Tenants Faster</span></h2>
-        <p style={{ fontSize: isMobile ? '16px' : '20px', opacity: 0.7, marginBottom: '40px', maxWidth: '700px', margin: '0 auto 40px' }}>Reach thousands of students actively searching for their next home. Verified listings get 3x more visibility.</p>
+        <h2 className="text-[28px] md:text-[48px] font-extrabold mb-4">List Your PG & Get <span style={{ color: COLORS.orange }}>Tenants Faster</span></h2>
+        <p className="text-base md:text-xl opacity-70 mb-10 max-w-[700px] mx-auto">Reach thousands of students actively searching for their next home. Verified listings get 3x more visibility.</p>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={onListClick} style={{ backgroundColor: COLORS.orange, color: 'white', border: 'none', padding: '16px 40px', borderRadius: '14px', fontSize: '16px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 10px 20px rgba(255,122,0,0.2)' }}>List Your PG Now</button>
           <a href="#landlord" style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '16px 40px', borderRadius: '14px', fontSize: '16px', fontWeight: 800, textDecoration: 'none' }}>Landlord Dashboard</a>
@@ -937,122 +937,136 @@ function FiltersBar({
   roomTypeFilter: string;
   setRoomTypeFilter: (v: string) => void;
 }) {
-  const isMobile = window.innerWidth < 768;
+  const [showFilters, setShowFilters] = useState(false);
 
   const sorts = ['Price: Low to High', 'Rating: High to Low', 'Distance: Nearest'];
   const genders = ['All', 'Boys', 'Girls', 'Co-ed'];
   const roomTypes = ['All', 'Single', 'Double', 'Triple'];
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column',
-      gap: '24px', 
-      marginBottom: '40px', 
-      padding: '24px',
-      background: COLORS.white,
-      borderRadius: '16px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-      border: `1px solid ${COLORS.border}`,
-      width: '100%',
-    }}>
-      {/* Search Row */}
-      <div style={{ position: 'relative', width: '100%' }}>
-        <input 
-          value={searchCity}
-          onChange={e => setSearchCity(e.target.value)}
-          placeholder="Search for PGs near MITAOE, Alandi, area or name..." 
-          style={{ 
-            width: '100%', 
-            padding: '18px 24px 18px 54px', 
-            borderRadius: '16px', 
-            border: `1px solid ${COLORS.border}`, 
-            fontSize: '16px', 
-            fontWeight: 600, 
-            background: '#F8FAFC', 
-            outline: 'none', 
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)' 
-          }} 
-        />
-        <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: COLORS.orange, fontSize: '20px' }}>🔍</div>
-      </div>
-
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'flex-end' }}>
-        {/* Gender */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>GENDER</span>
-          <div style={{ display: 'flex', gap: '6px', background: '#F1F5F9', padding: '4px', borderRadius: '12px' }}>
-            {genders.map(g => (
-              <button 
-                key={g} 
-                onClick={() => setGenderFilter(g)} 
-                style={{ 
-                  padding: '8px 16px', borderRadius: '10px', 
-                  backgroundColor: genderFilter === g ? COLORS.dark : 'transparent',
-                  color: genderFilter === g ? 'white' : COLORS.text2,
-                  border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
-                }}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Room Type */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>ROOM TYPE</span>
-          <div style={{ display: 'flex', gap: '6px', background: '#F1F5F9', padding: '4px', borderRadius: '12px' }}>
-            {roomTypes.map(r => (
-              <button 
-                key={r} 
-                onClick={() => setRoomTypeFilter(r)} 
-                style={{ 
-                  padding: '8px 16px', borderRadius: '10px', 
-                  backgroundColor: roomTypeFilter === r ? COLORS.dark : 'transparent',
-                  color: roomTypeFilter === r ? 'white' : COLORS.text2,
-                  border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
-                }}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Price Slider */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: '200px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>BUDGET</span>
-            <span style={{ fontSize: '13px', fontWeight: 800, color: COLORS.orange }}>₹{priceRange[1].toLocaleString()}</span>
-          </div>
+    <>
+      {/* Mobile Filter Toggle */}
+      <div className="md:hidden flex gap-3 mb-6">
+        <div className="relative flex-1">
           <input 
-            type="range" 
-            min="3500" 
-            max="15000" 
-            step="500" 
-            value={priceRange[1]}
-            onChange={e => setPriceRange([3500, parseInt(e.target.value)])}
-            style={{ width: '100%', accentColor: COLORS.orange, cursor: 'pointer' }} 
+            value={searchCity}
+            onChange={e => setSearchCity(e.target.value)}
+            placeholder="Search location..." 
+            className="w-full py-3.5 px-4 pl-12 rounded-xl border border-[#e2e8f0] text-sm font-semibold bg-[#F8FAFC] outline-none shadow-inner"
           />
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff7a00] text-lg">🔍</div>
         </div>
+        <button 
+          onClick={() => setShowFilters(true)}
+          className="bg-[#1e293b] text-white border-none px-5 rounded-xl font-bold flex items-center gap-2 shadow-md cursor-pointer"
+        >
+          Filters
+        </button>
+      </div>
 
-        {/* Sort */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>SORT BY</span>
-          <select 
-            value={sortBy} 
-            onChange={e => setSortBy(e.target.value)} 
-            style={{ 
-              padding: '12px 16px', borderRadius: '12px', border: `1px solid ${COLORS.border}`, background: '#F8FAFC', 
-              fontWeight: 700, fontSize: '13px', color: COLORS.dark, outline: 'none', cursor: 'pointer' 
-            }}
-          >
-            {sorts.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+      {/* Filter Container: Sticky on Desktop, Drawer on Mobile */}
+      <div className={`
+        fixed inset-0 z-[2000] bg-black/50 transition-opacity duration-300 md:static md:bg-transparent md:z-auto
+        ${showFilters ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto'}
+      `}>
+        <div className={`
+          absolute bottom-0 left-0 w-full bg-white rounded-t-3xl p-6 transition-transform duration-300 transform max-h-[85vh] overflow-y-auto
+          md:relative md:transform-none md:rounded-2xl md:p-6 md:mb-10 md:shadow-sm md:border md:border-[#e2e8f0] md:flex md:flex-col md:gap-6 md:sticky md:top-[90px] md:z-[100]
+          ${showFilters ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}
+        `}>
+          
+          <div className="flex justify-between items-center mb-6 md:hidden">
+            <h3 className="text-xl font-black text-[#1e293b]">Filters</h3>
+            <button onClick={() => setShowFilters(false)} className="bg-gray-100 w-8 h-8 rounded-full border-none font-bold text-gray-600 cursor-pointer">✕</button>
+          </div>
+
+          {/* Search Row - Desktop Only */}
+          <div className="relative w-full hidden md:block">
+            <input 
+              value={searchCity}
+              onChange={e => setSearchCity(e.target.value)}
+              placeholder="Search for PGs near MITAOE, Alandi, area or name..." 
+              className="w-full py-4 px-6 pl-14 rounded-2xl border border-[#e2e8f0] text-base font-semibold bg-[#F8FAFC] outline-none shadow-inner" 
+            />
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[#ff7a00] text-xl">🔍</div>
+          </div>
+
+          <div className="flex flex-col md:flex-row flex-wrap gap-6 md:gap-5 md:items-end">
+            {/* Gender */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[11px] font-extrabold text-[#64748B] tracking-wider">GENDER</span>
+              <div className="flex gap-1.5 bg-[#F1F5F9] p-1 rounded-xl flex-wrap">
+                {genders.map(g => (
+                  <button 
+                    key={g} 
+                    onClick={() => setGenderFilter(g)} 
+                    className={`px-4 py-2 rounded-lg border-none font-bold text-sm cursor-pointer transition-all flex-1 md:flex-none whitespace-nowrap
+                      ${genderFilter === g ? 'bg-[#1e293b] text-white shadow-md' : 'bg-transparent text-[#64748B] hover:bg-gray-200'}
+                    `}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Room Type */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[11px] font-extrabold text-[#64748B] tracking-wider">ROOM TYPE</span>
+              <div className="flex gap-1.5 bg-[#F1F5F9] p-1 rounded-xl flex-wrap">
+                {roomTypes.map(r => (
+                  <button 
+                    key={r} 
+                    onClick={() => setRoomTypeFilter(r)} 
+                    className={`px-4 py-2 rounded-lg border-none font-bold text-sm cursor-pointer transition-all flex-1 md:flex-none whitespace-nowrap
+                      ${roomTypeFilter === r ? 'bg-[#1e293b] text-white shadow-md' : 'bg-transparent text-[#64748B] hover:bg-gray-200'}
+                    `}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Slider */}
+            <div className="flex flex-col gap-2 flex-1 min-w-[200px]">
+              <div className="flex justify-between items-center">
+                <span className="text-[11px] font-extrabold text-[#64748B] tracking-wider">BUDGET</span>
+                <span className="text-sm font-extrabold text-[#ff7a00]">₹{priceRange[1].toLocaleString()}</span>
+              </div>
+              <input 
+                type="range" 
+                min="3500" 
+                max="15000" 
+                step="500" 
+                value={priceRange[1]}
+                onChange={e => setPriceRange([3500, parseInt(e.target.value)])}
+                className="w-full accent-[#ff7a00] cursor-pointer mt-1" 
+              />
+            </div>
+
+            {/* Sort */}
+            <div className="flex flex-col gap-2 w-full md:w-auto">
+              <span className="text-[11px] font-extrabold text-[#64748B] tracking-wider">SORT BY</span>
+              <select 
+                value={sortBy} 
+                onChange={e => setSortBy(e.target.value)} 
+                className="py-3 px-4 rounded-xl border border-[#e2e8f0] bg-[#F8FAFC] font-bold text-sm text-[#1e293b] outline-none cursor-pointer w-full md:w-auto"
+              >
+                {sorts.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            
+            <button 
+              onClick={() => setShowFilters(false)}
+              className="md:hidden mt-4 w-full bg-[#ff7a00] text-white border-none py-4 rounded-xl font-extrabold text-base shadow-lg cursor-pointer"
+            >
+              Apply Filters
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -1065,117 +1079,83 @@ interface PGCardProps {
 }
 
 function PGCard({ pg, isSelected, onCompare, onBook }: PGCardProps) {
-  const cardStyle: React.CSSProperties = {
-    background: COLORS.white, 
-    borderRadius: '16px', 
-    border: `1px solid ${COLORS.border}`,
-    overflow: 'hidden', 
-    display: 'flex', 
-    flexDirection: 'column', 
-    transition: 'all 0.3s ease', 
-    cursor: 'pointer',
-    position: 'relative',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
-  };
-
-  const imageAreaStyle: React.CSSProperties = { 
-    height: '220px', 
-    background: `linear-gradient(135deg, ${pg.colors[0]}, ${pg.colors[1]})`, 
-    position: 'relative', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    fontSize: '64px',
-    transition: 'transform 0.3s ease'
-  };
-
   return (
     <div 
-      style={cardStyle}
-      onMouseOver={e => {
-        e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-      }}
-      onMouseOut={e => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)';
-      }}
+      className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden flex flex-col transition-all duration-300 cursor-pointer relative shadow-sm hover:-translate-y-1 hover:shadow-xl group h-full"
     >
-      <div className="card-image" style={imageAreaStyle}>
-        <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <span style={{ 
-            background: COLORS.dark, color: 'white', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '100px'
-          }}>
+      <div 
+        className="h-[220px] relative flex items-center justify-center text-[64px] transition-transform duration-300" 
+        style={{ background: `linear-gradient(135deg, ${pg.colors[0]}, ${pg.colors[1]})` }}
+      >
+        <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
+          <span className="bg-[#1e293b] text-white text-[11px] font-bold py-1 px-3 rounded-full">
             {pg.gender.toUpperCase()}
           </span>
-          <span style={{ 
-            background: 'white', color: COLORS.dark, fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '100px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-          }}>
+          <span className="bg-white text-[#1e293b] text-[11px] font-bold py-1 px-3 rounded-full shadow-md">
             ⭐ {pg.rating}
           </span>
           {pg.verified && (
-            <span style={{ background: COLORS.success, color: 'white', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '100px', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
+            <span className="bg-[#10B981] text-white text-[11px] font-bold py-1 px-3 rounded-full shadow-[0_4px_12px_rgba(16,185,129,0.3)]">
               ✅ Verified
             </span>
           )}
         </div>
         
-        <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 2 }}>
-          <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', padding: '8px', borderRadius: '50%', transition: 'background 0.3s' }}>
+        <div className="absolute top-4 right-4 z-[2]">
+          <label className="cursor-pointer flex items-center bg-white/20 backdrop-blur-md p-2 rounded-full transition-colors hover:bg-white/30" onClick={(e) => e.stopPropagation()}>
             <input 
               type="checkbox" 
               checked={isSelected} 
               onChange={onCompare} 
-              style={{ width: '20px', height: '20px', accentColor: COLORS.orange, cursor: 'pointer' }} 
+              className="w-5 h-5 accent-[#ff7a00] cursor-pointer" 
             />
           </label>
         </div>
         
-        <span style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }}>
+        <span className="drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)] group-hover:scale-110 transition-transform duration-300">
           {pg.gender === 'Girls' ? '🏠' : pg.gender === 'Boys' ? '🏢' : '🏡'}
         </span>
       </div>
 
-      <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ marginBottom: '12px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{pg.name}</h3>
-          <p style={{ color: COLORS.text2, fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <MapPin size={14} color={COLORS.orange} /> {pg.address}
+      <div className="p-5 flex-1 flex flex-col bg-white z-[1]">
+        <div className="mb-3">
+          <h3 className="text-xl font-extrabold text-[#1e293b] mb-1 line-clamp-1">{pg.name}</h3>
+          <p className="text-[#64748B] text-[13px] font-medium flex items-center gap-1">
+            <MapPin size={14} className="text-[#ff7a00] shrink-0" /> <span className="line-clamp-1">{pg.address}</span>
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '16px', padding: '12px 0', borderTop: `1px solid ${COLORS.border}44`, borderBottom: `1px solid ${COLORS.border}44` }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Navigation size={14} />
-            <span style={{ fontSize: '12px', fontWeight: 700 }}>{pg.distance} km</span>
+        <div className="flex gap-3 items-center mb-4 py-3 border-y border-[#e2e8f0]/40">
+          <div className="flex items-center gap-1">
+            <Navigation size={14} className="shrink-0" />
+            <span className="text-xs font-bold whitespace-nowrap">{pg.distance} km</span>
           </div>
-          <div style={{ width: '1px', height: '14px', background: COLORS.border }} />
-          <div style={{ fontSize: '12px', fontWeight: 700 }}>{pg.room_type}</div>
+          <div className="w-px h-3.5 bg-[#e2e8f0]" />
+          <div className="text-xs font-bold whitespace-nowrap">{pg.room_type}</div>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px' }}>
+        <div className="flex flex-wrap gap-2 mb-6">
           {pg.facilities.slice(0, 3).map(f => (
-            <span key={f} style={{ background: '#F1F5F9', color: COLORS.text2, padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 700 }}>{f}</span>
+            <span key={f} className="bg-[#F1F5F9] text-[#64748B] py-1 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap">{f}</span>
           ))}
-          {pg.facilities.length > 3 && <span style={{ fontSize: '11px', fontWeight: 700, alignSelf: 'center' }}>+{pg.facilities.length - 3}</span>}
+          {pg.facilities.length > 3 && <span className="text-[11px] font-bold self-center">+{pg.facilities.length - 3}</span>}
         </div>
         
-        <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="mt-auto flex items-center justify-between flex-wrap gap-3">
           <div>
-            <span style={{ fontSize: '22px', fontWeight: 900, color: COLORS.orange }}>₹{pg.rent.toLocaleString()}</span>
-            <span style={{ fontSize: '12px', color: COLORS.text2, fontWeight: 700 }}>/mo</span>
+            <span className="text-[22px] font-black text-[#ff7a00]">₹{pg.rent.toLocaleString()}</span>
+            <span className="text-xs text-[#64748B] font-bold">/mo</span>
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="flex gap-2 w-full min-[400px]:w-auto">
             <button 
-              onClick={() => window.open(`tel:${pg.contact}`)}
-              style={{ background: 'white', color: COLORS.dark, border: `2px solid ${COLORS.dark}`, padding: '10px 18px', borderRadius: '14px', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+              onClick={(e) => { e.stopPropagation(); window.open(`tel:${pg.contact}`); }}
+              className="flex-1 min-[400px]:flex-none bg-white text-[#1e293b] border-2 border-[#1e293b] py-2 px-4 rounded-xl font-extrabold text-[13px] cursor-pointer hover:bg-gray-50 transition-colors"
             >
               Contact
             </button>
             <button 
-              onClick={onBook} 
-              style={{ background: COLORS.dark, color: COLORS.white, border: 'none', padding: '12px 20px', borderRadius: '14px', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+              onClick={(e) => { e.stopPropagation(); onBook?.(); }}
+              className="flex-1 min-[400px]:flex-none bg-[#1e293b] text-white border-none py-2 px-4 rounded-xl font-extrabold text-[13px] cursor-pointer shadow-md hover:bg-gray-800 transition-colors"
             >
               Details
             </button>
@@ -1188,15 +1168,15 @@ function PGCard({ pg, isSelected, onCompare, onBook }: PGCardProps) {
 
 function SkeletonCard() {
   return (
-    <div style={{ background: COLORS.white, borderRadius: '16px', border: `1px solid ${COLORS.border}`, overflow: 'hidden', height: '480px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-      <div className="skeleton" style={{ height: '240px' }} />
-      <div style={{ padding: '24px' }}>
-        <div className="skeleton" style={{ height: '24px', width: '70%', marginBottom: '12px', borderRadius: '6px' }} />
-        <div className="skeleton" style={{ height: '16px', width: '40%', marginBottom: '24px', borderRadius: '4px' }} />
-        <div className="skeleton" style={{ height: '40px', width: '100%', marginBottom: '24px', borderRadius: '12px' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="skeleton" style={{ height: '32px', width: '40%', borderRadius: '6px' }} />
-          <div className="skeleton" style={{ height: '48px', width: '30%', borderRadius: '16px' }} />
+    <div className="bg-white rounded-2xl border border-[#e2e8f0] overflow-hidden h-[480px] shadow-sm flex flex-col">
+      <div className="skeleton h-[240px] shrink-0" />
+      <div className="p-6 flex-1 flex flex-col">
+        <div className="skeleton h-6 w-[70%] mb-3 rounded-md" />
+        <div className="skeleton h-4 w-[40%] mb-6 rounded-md" />
+        <div className="skeleton h-10 w-full mb-6 rounded-xl" />
+        <div className="mt-auto flex justify-between items-center">
+          <div className="skeleton h-8 w-[40%] rounded-md" />
+          <div className="skeleton h-12 w-[30%] rounded-xl" />
         </div>
       </div>
     </div>
@@ -1249,7 +1229,7 @@ function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatchin
       <div className="blur-orb" style={{ top: '20%', right: '-10%', width: '400px', height: '400px', background: COLORS.orange, opacity: 0.15 }} />
       <div className="blur-orb" style={{ bottom: '10%', left: '-5%', width: '300px', height: '300px', background: '#3B82F6', opacity: 0.1 }} />
       
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr', gap: '80px', position: 'relative', zIndex: 1 }}>
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-20 relative z-[1]">
         <div>
           <div style={{ marginBottom: '48px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,122,0,0.1)', padding: '8px 16px', borderRadius: '100px', marginBottom: '16px', border: `1px solid ${COLORS.orange}33` }}>
@@ -1331,7 +1311,7 @@ function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatchin
               <p style={{ color: '#94A3B8', fontSize: '15px', maxWidth: '320px', lineHeight: 1.6 }}>Set your preferences on the left to discover people you'll actually enjoy living with.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {results.slice(0, 4).map((mate, idx) => (
                 <div key={mate.id} style={{ 
                   background: idx === 0 ? 'rgba(255,122,0,0.05)' : 'rgba(255,255,255,0.03)', 
@@ -1510,9 +1490,9 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '280px 1fr', gap: '40px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-10">
           {/* Sidebar */}
-          <aside style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '8px', overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? '16px' : 0 }}>
+          <aside className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0">
             <SidebarItem id="dashboard" label="Overview" icon="📊" />
             <SidebarItem id="listings" label="My Properties" icon="🏘️" />
             <SidebarItem id="add" label="List New PG" icon="✨" />
@@ -1521,10 +1501,10 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
           </aside>
 
           {/* Main Workspace */}
-          <div style={{ background: COLORS.white, borderRadius: '32px', padding: isMobile ? '24px' : '40px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+          <div className="bg-white rounded-[32px] p-6 md:p-10 border border-[#e2e8f0]/30 shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
             {tab === 'dashboard' && (
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '20px', marginBottom: '48px' }}>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
                   {stats.map(s => (
                     <div key={s.label} style={{ background: '#F8FAFC', padding: '24px', borderRadius: '24px', border: `1px solid ${COLORS.border}88` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -1537,7 +1517,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                   ))}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.5fr', gap: '40px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-10">
                   <div style={{ background: COLORS.dark, color: 'white', padding: '32px', borderRadius: '24px', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'relative', zIndex: 1 }}>
                       <h4 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px' }}>Boost Your Listings</h4>
@@ -1606,12 +1586,12 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                       {step === 1 && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                           <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Owner Identification</p>
-                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <input required placeholder="Full Name" style={inputStyle} value={form.ownerName} onChange={e => setForm({...form, ownerName: e.target.value})} />
                             <input required placeholder="Contact Number" style={inputStyle} value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
                           </div>
                           <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Property Name & City</p>
-                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.5fr 1fr', gap: '16px' }}>
+                          <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4">
                             <input required placeholder="Property Name (e.g. Zen Stays)" style={inputStyle} value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
                             <select style={inputStyle} value={form.city} onChange={e => setForm({...form, city: e.target.value})}>
                               <option>Pune</option><option>Mumbai</option><option>Bangalore</option><option>Hyderabad</option>
@@ -1623,7 +1603,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                       {step === 2 && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                           <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rental Structure</p>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Monthly Rent (₹)</label>
                               <input required type="number" style={inputStyle} value={form.rent} onChange={e => setForm({...form, rent: parseInt(e.target.value)})} />
@@ -1716,7 +1696,7 @@ function ContactHelpSection({ isMobile }: { isMobile: boolean }) {
     <section style={{ padding: '40px 20px 100px', background: COLORS.bg }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
         <h2 style={{ fontSize: '32px', fontWeight: 800, color: COLORS.dark, marginBottom: '40px' }}>Need Help Styling Your Journey?</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '30px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[30px]">
           {[
             { title: 'Support Email', value: 'stayfinder.team@gmail.com', icon: '✉️', color: '#E0F2FE' },
             { title: 'Contact Support', value: '+91 9579583569', icon: '📞', color: '#FEF3C7' }
@@ -1958,7 +1938,7 @@ function BookingModal({ isOpen, onClose, pg, isMobile }: BookingModalProps) {
             <h5 style={{ fontSize: '15px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Sparkles size={18} color={COLORS.orange} /> AI Real-Time Insights
             </h5>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '12px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {loadingInsights ? (
                 Array(2).fill(0).map((_, i) => (
                   <div key={i} className="skeleton" style={{ height: '80px', borderRadius: '16px' }} />
@@ -2031,7 +2011,7 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Strategic Comparison" maxWidth="1200px">
       <div style={{ padding: '0 0 20px 0' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '100px repeat(3, 1fr)' : '200px repeat(3, 1fr)', gap: '12px', borderBottom: `2px solid ${COLORS.border}44`, paddingBottom: '32px' }}>
+        <div className="grid grid-cols-[100px_repeat(3,1fr)] md:grid-cols-[200px_repeat(3,1fr)] gap-3 pb-8 border-b-2 border-[#e2e8f0]/40">
           <div />
           {pgs.map(pg => (
             <div key={pg.id} style={{ textAlign: 'center', position: 'relative' }}>
@@ -2055,7 +2035,7 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
           else if (['rent', 'distance'].includes(f.key)) bestVal = Math.min(...values as number[]);
 
           return (
-            <div key={f.label} style={{ display: 'grid', gridTemplateColumns: isMobile ? '100px repeat(3, 1fr)' : '200px repeat(3, 1fr)', gap: '12px', borderBottom: idx === features.length - 1 ? 'none' : `1px solid ${COLORS.border}22`, padding: '24px 0' }}>
+            <div key={f.label} className="grid grid-cols-[100px_repeat(3,1fr)] md:grid-cols-[200px_repeat(3,1fr)] gap-3 py-6" style={{ borderBottom: idx === features.length - 1 ? 'none' : `1px solid ${COLORS.border}22` }}>
                <div style={{ fontSize: '14px', fontWeight: 800, color: COLORS.text2, display: 'flex', alignItems: 'center' }}>{f.label}</div>
                {pgs.map(pg => {
                  const val = (pg as any)[f.key];
@@ -2073,7 +2053,7 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
           );
         })}
 
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '100px repeat(3, 1fr)' : '200px repeat(3, 1fr)', gap: '12px', marginTop: '40px' }}>
+        <div className="grid grid-cols-[100px_repeat(3,1fr)] md:grid-cols-[200px_repeat(3,1fr)] gap-3 mt-10">
           <div />
           {pgs.map(pg => (
             <button key={pg.id} onClick={onClose} style={{ width: '100%', background: COLORS.dark, color: 'white', border: 'none', padding: '16px', borderRadius: '100px', fontWeight: 800, fontSize: '14px', cursor: 'pointer', transition: 'all 0.3s' }} onMouseOver={e => e.currentTarget.style.backgroundColor = COLORS.orange} onMouseOut={e => e.currentTarget.style.backgroundColor = COLORS.dark}>
