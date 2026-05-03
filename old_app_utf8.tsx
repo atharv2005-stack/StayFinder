@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -10,9 +10,7 @@ import { ContactPage } from './components/ContactPage';
 import { AIChatbot } from './components/AIChatbot';
 import { PGMapView } from './components/PGMapView';
 import { getNearByInsights } from './services/geminiService';
-import { 
-  Map, List, Navigation, Sparkles, MapPin, Hospital, Coffee, ShieldCheck, RefreshCw 
-} from 'lucide-react';
+import { Map, List, Navigation, Sparkles, MapPin, Hospital, Coffee, ShieldCheck, RefreshCw } from 'lucide-react';
 import { COLORS } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './contexts/AuthContext';
@@ -77,11 +75,11 @@ interface LandlordPG extends Partial<PG> {
 }
 
 const roommateData: Roommate[] = [
-  { id: '1', name: "Rahul Desai", city: "Pune", sleep: "Early Bird", clean: "High", social: "Introvert", sharing: 2, budget: "₹5K–₹10K", emoji: "👨", tags: ["Engineer", "Music"], desc: "Tech student at MIT, loves quiet nights." },
-  { id: '2', name: "Priya Nair", city: "Pune", sleep: "Night Owl", clean: "Medium", social: "Extrovert", sharing: 1, budget: "₹10K–₹15K", emoji: "👩", tags: ["Designer", "Gym"], desc: "Fashion design major, social and active." },
-  { id: '3', name: "Sneha K", city: "Mumbai", sleep: "Early Bird", clean: "High", social: "Ambivert", sharing: 2, budget: "₹8K–₹12K", emoji: "👩", tags: ["CA Student", "Yoga"], desc: "Preparing for exams, values cleanliness." },
-  { id: '4', name: "Dev Sharma", city: "Bangalore", sleep: "Night Owl", clean: "Low", social: "Extrovert", sharing: 3, budget: "₹5K–₹8K", emoji: "🧑", tags: ["Developer", "Gamer"], desc: "Loves gaming and late night coding." },
-  { id: '5', name: "Amit Singh", city: "Pune", sleep: "Night Owl", clean: "Medium", social: "Ambivert", sharing: 2, budget: "₹5K–₹10K", emoji: "🧑", tags: ["MBA", "Cricket"], desc: "Easy going, sports enthusiast." },
+  { id: '1', name: "Rahul Desai", city: "Pune", sleep: "Early Bird", clean: "High", social: "Introvert", sharing: 2, budget: "Γé╣5KΓÇôΓé╣10K", emoji: "≡ƒæ¿", tags: ["Engineer", "Music"], desc: "Tech student at MIT, loves quiet nights." },
+  { id: '2', name: "Priya Nair", city: "Pune", sleep: "Night Owl", clean: "Medium", social: "Extrovert", sharing: 1, budget: "Γé╣10KΓÇôΓé╣15K", emoji: "≡ƒæ⌐", tags: ["Designer", "Gym"], desc: "Fashion design major, social and active." },
+  { id: '3', name: "Sneha K", city: "Mumbai", sleep: "Early Bird", clean: "High", social: "Ambivert", sharing: 2, budget: "Γé╣8KΓÇôΓé╣12K", emoji: "≡ƒæ⌐", tags: ["CA Student", "Yoga"], desc: "Preparing for exams, values cleanliness." },
+  { id: '4', name: "Dev Sharma", city: "Bangalore", sleep: "Night Owl", clean: "Low", social: "Extrovert", sharing: 3, budget: "Γé╣5KΓÇôΓé╣8K", emoji: "≡ƒºæ", tags: ["Developer", "Gamer"], desc: "Loves gaming and late night coding." },
+  { id: '5', name: "Amit Singh", city: "Pune", sleep: "Night Owl", clean: "Medium", social: "Ambivert", sharing: 2, budget: "Γé╣5KΓÇôΓé╣10K", emoji: "≡ƒºæ", tags: ["MBA", "Cricket"], desc: "Easy going, sports enthusiast." },
 ];
 
 export default function App() {
@@ -116,7 +114,7 @@ export default function App() {
     clean: 'Medium' as 'High' | 'Medium' | 'Low', 
     social: 'Ambivert' as 'Introvert' | 'Extrovert' | 'Ambivert', 
     sharing: 2, 
-    budget: '₹5K–₹10K' 
+    budget: 'Γé╣5KΓÇôΓé╣10K' 
   });
   const [isMatching, setIsMatching] = useState(false);
   const [mateResults, setMateResults] = useState<Roommate[]>([]);
@@ -159,6 +157,8 @@ export default function App() {
       @keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
       .modal-enter { opacity: 0; transform: translateY(20px); transition: all 0.3s ease; }
       .modal-active { opacity: 1; transform: translateY(0); }
+      .pill-enter { transform: translateX(-50%) translateY(100px); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+      .pill-active { transform: translateX(-50%) translateY(0); }
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: ${COLORS.bg}; }
       ::-webkit-scrollbar-thumb { background: ${COLORS.border}; border-radius: 4px; }
@@ -374,7 +374,6 @@ export default function App() {
       <Hero 
         searchCity={searchCity} 
         setSearchCity={setSearchCity} 
-        isMobile={isMobile}
       />
 
       <FeatureStrip isMobile={isMobile} />
@@ -523,124 +522,109 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
   const [open, setOpen] = useState(false);
   
   return (
-    <nav style={{ 
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-      background: 'white',
-      borderBottom: `1px solid ${COLORS.border}`,
-      padding: '16px 40px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
-      <div style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div 
-          onClick={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0, 0); }}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-        >
-          <span style={{ fontSize: '28px' }}>🏘️</span>
-          <span style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark, letterSpacing: '-0.02em' }}>
-            Stay<span style={{ color: COLORS.orange }}>Finder</span>
-          </span>
-        </div>
-
-        {!isMobile && (
-          <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Help'].map(l => (
-              <a 
-                key={l} 
-                href={l === 'Landlord Panel' ? '/dashboard' : '#'} 
-                onClick={(e) => {
-                  if (l === 'Landlord Panel') {
-                    e.preventDefault();
-                    window.history.pushState({}, '', '/dashboard');
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                  }
-                }}
-                style={{ 
-                  color: COLORS.dark, textDecoration: 'none', 
-                  fontSize: '15px', fontWeight: 700, opacity: 0.8, transition: 'opacity 0.2s' 
-                }}
-                onMouseOver={e => e.currentTarget.style.opacity = '1'}
-                onMouseOut={e => e.currentTarget.style.opacity = '0.8'}
-              >
-                {l}
-              </a>
-            ))}
-            
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginLeft: '16px' }}>
-              <button 
-                onClick={onListClick}
-                style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '8px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', transition: 'background 0.2s' }}
-                onMouseOver={e => e.currentTarget.style.background = '#e66e00'}
-                onMouseOut={e => e.currentTarget.style.background = COLORS.orange}
-              >
-                List Your PG
-              </button>
-              
-              {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '6px 16px 6px 6px', borderRadius: '100px', border: `1px solid ${COLORS.border}` }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: COLORS.orange, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '14px' }}>
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 800, color: COLORS.dark }}>{user.name.split(' ')[0]}</span>
-                    <button onClick={logout} style={{ background: 'none', border: 'none', color: COLORS.orange, padding: 0, fontSize: '10px', fontWeight: 800, textAlign: 'left', cursor: 'pointer' }}>Logout</button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button 
-                    onClick={() => { window.history.pushState({}, '', '/auth'); window.dispatchEvent(new PopStateEvent('popstate')); }}
-                    style={{ background: 'white', color: COLORS.dark, border: `1px solid ${COLORS.border}`, padding: '12px 24px', borderRadius: '8px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' }}
-                  >
-                    Login
-                  </button>
-                  <button 
-                    onClick={() => { window.history.pushState({}, '', '/auth'); window.dispatchEvent(new PopStateEvent('popstate')); }}
-                    style={{ background: COLORS.dark, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '8px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' }}
-                  >
-                    Sign Up
-                  </button>
-                </div>
-              )}
+    <nav className={`fixed top-0 w-full h-[72px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] z-[1000] flex items-center justify-between px-6 transition-all duration-300 ${scrolled ? 'shadow-md' : ''}`}>
+      <div className="text-2xl font-black text-[#1e293b]">
+        ≡ƒÅá Stay<span className="text-[#ff7a00]">Finder</span>
+      </div>
+      
+      {/* Desktop Menu */}
+      <div className="hidden md:flex gap-8 items-center">
+        {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
+          <a key={l} href={`/#${l.toLowerCase().split(' ')[0]}`} className="nav-link" onClick={(e) => {
+            if (window.location.pathname !== '/') {
+              e.preventDefault();
+              window.history.pushState({}, '', '/');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+              setTimeout(() => document.getElementById(l.toLowerCase().split(' ')[0])?.scrollIntoView(), 100);
+            }
+          }}>{l}</a>
+        ))}
+        <a href="/contact" className="nav-link" onClick={(e) => {
+          e.preventDefault();
+          window.history.pushState({}, '', '/contact');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+          window.scrollTo(0, 0);
+        }}>Help</a>
+        <button onClick={onListClick} className="bg-[#ff7a00] text-white px-6 py-3 rounded-xl font-bold transition-all duration-200 shadow-[0_4px_12px_rgba(255,122,0,0.3)] hover:scale-105">List Your PG</button>
+        
+        {user ? (
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col items-end">
+              <span className="text-sm font-bold text-[#1e293b]">{user.name}</span>
+              <span className="text-[10px] font-extrabold text-[#ff7a00] uppercase bg-[#FFF5EC] px-1.5 py-0.5 rounded">{user.role}</span>
             </div>
+            <div className="w-9 h-9 rounded-full bg-[#ff7a00] text-white flex items-center justify-center font-extrabold">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <button onClick={logout} className="bg-transparent border-none text-[#64748B] font-bold cursor-pointer ml-2">Logout</button>
           </div>
-        )}
-
-        {isMobile && (
-          <button onClick={() => setOpen(!open)} style={{ background: 'none', border: 'none', color: scrolled ? COLORS.dark : 'white', fontSize: '24px', cursor: 'pointer' }}>
-            {open ? '✕' : '☰'}
-          </button>
+        ) : (
+          <div className="flex gap-3">
+            <button onClick={() => {
+              window.history.pushState({}, '', '/auth');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }} className="bg-transparent border-2 border-[#e2e8f0] text-[#1e293b] px-6 py-2.5 rounded-xl font-bold cursor-pointer hover:bg-gray-50 transition-colors">Login</button>
+            <button onClick={() => {
+              window.history.pushState({}, '', '/auth');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }} className="bg-[#1e293b] border-none text-white px-6 py-2.5 rounded-xl font-bold cursor-pointer hover:bg-gray-800 transition-colors">Sign Up</button>
+          </div>
         )}
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobile && open && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            style={{ 
-              position: 'absolute', top: '100%', left: '20px', right: '20px', 
-              background: 'white', borderRadius: '24px', padding: '24px', 
-              boxShadow: '0 20px 40px rgba(0,0,0,0.1)', display: 'flex', 
-              flexDirection: 'column', gap: '20px', border: `1px solid ${COLORS.border}55` 
-            }}
-          >
-            {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
-              <a key={l} href="#" style={{ color: COLORS.dark, textDecoration: 'none', fontSize: '16px', fontWeight: 800 }}>{l}</a>
-            ))}
-            <button onClick={() => { onListClick(); setOpen(false); }} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px', borderRadius: '14px', fontWeight: 800, fontSize: '16px' }}>List Your PG</button>
-            <button onClick={() => { window.history.pushState({}, '', '/auth'); window.dispatchEvent(new PopStateEvent('popstate')); setOpen(false); }} style={{ background: COLORS.bg, color: COLORS.dark, border: 'none', padding: '16px', borderRadius: '14px', fontWeight: 800, fontSize: '16px' }}>Login / Signup</button>
-          </motion.div>
+      {/* Mobile Menu Button */}
+      <button onClick={() => setOpen(!open)} className="md:hidden bg-transparent border-none text-2xl cursor-pointer text-[#1e293b] z-[1001]">
+        {open ? 'Γ£ò' : 'Γÿ░'}
+      </button>
+
+      {/* Mobile Drawer */}
+      <div className={`md:hidden fixed top-[72px] right-0 w-full sm:w-80 h-[calc(100vh-72px)] bg-white p-6 flex flex-col gap-6 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] border-l border-[#e2e8f0] transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto z-[1000]`}>
+        {['Explore PGs', 'Roommate Matching', 'Landlord Panel'].map(l => (
+          <a key={l} href={`/#${l.toLowerCase().split(' ')[0]}`} onClick={(e) => {
+            if (window.location.pathname !== '/') {
+              e.preventDefault();
+              window.history.pushState({}, '', '/');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+              setTimeout(() => document.getElementById(l.toLowerCase().split(' ')[0])?.scrollIntoView(), 100);
+            }
+            setOpen(false);
+          }} className="text-[#1e293b] no-underline font-bold text-base py-2 border-b border-gray-100">{l}</a>
+        ))}
+        <a href="/contact" onClick={(e) => {
+          e.preventDefault();
+          window.history.pushState({}, '', '/contact');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+          window.scrollTo(0, 0);
+          setOpen(false);
+        }} className="text-[#1e293b] no-underline font-bold text-base py-2 border-b border-gray-100">Help</a>
+        <button onClick={() => { onListClick(); setOpen(false); }} className="bg-[#ff7a00] text-white border-none p-3.5 rounded-xl font-bold text-base mt-2 min-h-[44px]">List Your PG</button>
+        
+        {user ? (
+          <div className="flex flex-col gap-3 mt-3">
+            <div className="flex items-center gap-3 bg-[#F8FAFC] p-3 rounded-xl">
+              <div className="w-9 h-9 rounded-full bg-[#ff7a00] text-white flex items-center justify-center font-extrabold">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-[#1e293b]">{user.name}</span>
+                <span className="text-[10px] font-extrabold text-[#ff7a00] uppercase">{user.role}</span>
+              </div>
+            </div>
+            <button onClick={() => { logout(); setOpen(false); }} className="bg-[#FEE2E2] text-[#DC2626] border-none p-3.5 rounded-xl font-bold text-base min-h-[44px]">Logout</button>
+          </div>
+        ) : (
+          <button onClick={() => {
+            window.history.pushState({}, '', '/auth');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+            setOpen(false);
+          }} className="bg-[#F1F5F9] text-[#1e293b] border-none p-3.5 rounded-xl font-bold text-base mt-3 min-h-[44px]">Login / Signup</button>
         )}
-      </AnimatePresence>
+      </div>
     </nav>
   );
 }
 
-function Hero({ searchCity, setSearchCity, isMobile }: { searchCity: string, setSearchCity: (v: string) => void, isMobile: boolean }) {
+function Hero({ searchCity, setSearchCity }: { searchCity: string, setSearchCity: (v: string) => void }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -695,104 +679,103 @@ function Hero({ searchCity, setSearchCity, isMobile }: { searchCity: string, set
   );
 
   return (
-    <header style={{ 
-      background: '#202836', 
-      color: 'white', 
-      padding: '160px 40px 100px', 
-      position: 'relative', 
-      overflow: 'hidden',
-      textAlign: 'left'
-    }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 style={{ fontSize: isMobile ? '40px' : '56px', fontWeight: 900, marginBottom: '24px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+    <header className="min-h-[auto] md:min-h-[85vh] bg-gradient-to-br from-[#1e293b] to-[#0f172a] text-white flex flex-col items-center justify-center pt-[120px] md:pt-[140px] px-6 pb-20 relative text-center md:text-left overflow-visible">
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 30%, rgba(255,122,0,0.08) 0%, transparent 50%)' }} />
+      <div className="blur-orb" style={{ top: '-10%', left: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,122,0,0.15) 0%, transparent 70%)' }} />
+      <div className="blur-orb" style={{ bottom: '10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)' }} />
+      
+      <div className="max-w-[1200px] w-full mx-auto z-[2] flex flex-col items-center md:items-start">
+        <div className="max-w-[850px]">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-5 leading-tight tracking-tight">
             Find Your Perfect PG Near <br/>
-            <span style={{ color: COLORS.orange }}>
-              College or Workplace
-            </span>
+            <span className="text-[#ff7a00]">College or Workplace</span>
           </h1>
-          <p style={{ fontSize: isMobile ? '16px' : '20px', color: '#94A3B8', marginBottom: '48px', fontWeight: 500, maxWidth: '600px' }}>
+          <p className="text-base md:text-lg text-[#94A3B8] mb-0 font-medium leading-relaxed max-w-[550px]">
             Verified listings. Smart comparison. Better decisions.
           </p>
-        </motion.div>
+        </div>
         
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          style={{ 
-            background: 'white', 
-            padding: '8px', 
-            borderRadius: '16px', 
-            display: 'flex', 
-            gap: '0px', 
-            maxWidth: '1000px', 
-            flexDirection: isMobile ? 'column' : 'row',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            marginBottom: '64px'
-          }}
-        >
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 20px', position: 'relative' }}>
-            <span style={{ fontSize: '20px' }}>🎓</span>
+        <div className="bg-white p-2 rounded-xl flex gap-1 w-full max-w-[900px] flex-col md:flex-row shadow-[0_20px_40px_rgba(0,0,0,0.15)] mt-12 border border-[#e2e8f0]">
+          <div className="flex-1 flex items-center bg-transparent rounded-lg px-5 border-none relative">
+            <span className="text-xl">≡ƒÄô</span>
             <input 
               placeholder="Enter your college name" 
               value={searchQuery} 
-              onChange={e => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+              onChange={e => {
+                setSearchQuery(e.target.value);
+                setShowSuggestions(true);
+              }}
               onFocus={() => setShowSuggestions(true)}
-              style={{ flex: 1, border: 'none', padding: '18px 16px', background: 'transparent', color: COLORS.dark, outline: 'none', fontSize: '16px', fontWeight: 500 }}
+              className="w-full border-none py-4 px-2 text-[15px] bg-transparent text-[#1e293b] outline-none font-medium"
             />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="bg-transparent border-none cursor-pointer text-[#94A3B8] px-2 text-sm"
+              >
+                Γ£ò
+              </button>
+            )}
+
             {showSuggestions && searchQuery && (
-              <div style={{ position: 'absolute', top: 'calc(100% + 12px)', left: 0, width: '100%', background: 'white', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', zIndex: 100, overflow: 'hidden' }}>
-                {filteredColleges.length > 0 ? filteredColleges.map((c, i) => (
-                  <div key={i} onClick={() => { setSearchQuery(c.name); setSearchCity(c.name); setShowSuggestions(false); }} style={{ padding: '14px 20px', cursor: 'pointer', borderBottom: `1px solid ${COLORS.border}44`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: COLORS.dark }} onMouseOver={e => e.currentTarget.style.background = '#F8FAFC'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                    <span style={{ fontWeight: 700, fontSize: '14px' }}>{c.name}</span>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, background: '#F1F5F9', padding: '4px 8px', borderRadius: '6px' }}>{c.location}</span>
+              <div className="absolute top-[calc(100%+12px)] left-0 w-full bg-white rounded-xl shadow-[0_15px_35px_rgba(0,0,0,0.15)] z-[100] max-h-[320px] overflow-y-auto border border-[#e2e8f0] p-2">
+                {filteredColleges.length > 0 ? (
+                  filteredColleges.map((c, i) => (
+                    <div 
+                      key={i} 
+                      onClick={() => {
+                        setSearchQuery(c.name);
+                        setSearchCity(c.name);
+                        setShowSuggestions(false);
+                      }}
+                      className="p-3.5 px-4 cursor-pointer rounded-xl transition-all duration-200 flex justify-between items-center mb-0.5 hover:bg-[#F1F5F9] hover:translate-x-1"
+                    >
+                      <span className="text-sm font-semibold text-[#1e293b]">{c.name}</span>
+                      <span className="text-[10px] font-extrabold text-[#64748B] bg-[#F1F5F9] px-2 py-1 rounded-md">{c.location}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-6 text-center text-[#64748B] text-sm font-semibold">
+                    No colleges found ≡ƒöì
                   </div>
-                )) : <div style={{ padding: '20px', color: COLORS.text2, fontSize: '14px' }}>No colleges found 🔍</div>}
+                )}
               </div>
             )}
           </div>
-          {!isMobile && <div style={{ width: '1px', background: COLORS.border, margin: '8px 0', alignSelf: 'stretch' }} />}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 20px' }}>
-            <span style={{ fontSize: '20px' }}>📍</span>
+
+          <div className="w-px h-[30px] bg-[#e2e8f0] self-center hidden md:block" />
+
+          <div className="flex-1 flex items-center bg-transparent rounded-lg px-5 border-none">
+            <span className="text-xl">≡ƒôì</span>
             <input 
               placeholder="Search by area (e.g. Kothrud)" 
               value={searchCity} 
               onChange={e => setSearchCity(e.target.value)} 
-              style={{ flex: 1, border: 'none', padding: '18px 16px', background: 'transparent', color: COLORS.dark, outline: 'none', fontSize: '16px', fontWeight: 500 }} 
+              className="w-full border-none py-4 px-2 text-[15px] bg-transparent text-[#1e293b] outline-none font-medium" 
             />
           </div>
+
           <button 
             onClick={() => {
               if (searchQuery && !searchCity) setSearchCity(searchQuery);
               document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            style={{ background: COLORS.orange, color: 'white', border: 'none', padding: isMobile ? '16px' : '0 32px', borderRadius: '12px', fontWeight: 800, fontSize: '16px', cursor: 'pointer', transition: 'background 0.3s', whiteSpace: 'nowrap' }} 
-            onMouseOver={e => e.currentTarget.style.background = '#e66e00'} 
-            onMouseOut={e => e.currentTarget.style.background = COLORS.orange}
+            className="bg-[#ff7a00] text-white border-none p-4 md:py-0 md:px-10 rounded-lg text-base font-extrabold cursor-pointer transition-all duration-200 h-auto md:h-[58px] whitespace-nowrap shadow-[0_4px_12px_rgba(255,122,0,0.3)] hover:scale-105 hover:bg-[#ff8a1a] w-full md:w-auto mt-2 md:mt-0"
           >
             Search PGs
           </button>
-        </motion.div>
+        </div>
 
-        <div style={{ display: 'flex', gap: isMobile ? '32px' : '64px', flexWrap: 'wrap' }}>
-          {[
-            { label: 'AVERAGE RATING', value: '4.6', icon: '⭐', iconColor: COLORS.orange },
-            { label: 'VERIFIED PGS', value: '500+', icon: '✔️', iconColor: 'white' },
-            { label: 'STUDENTS JOINED', value: '10K+', icon: '👥', iconColor: '#A78BFA' }
-          ].map(stat => (
-            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '24px', color: stat.iconColor, display: 'flex', alignItems: 'center' }}>
-                {stat.icon}
-              </span>
-              <div style={{ textAlign: 'left' }}>
-                <p style={{ fontSize: '24px', fontWeight: 800, color: 'white', margin: 0, lineHeight: 1.2 }}>{stat.value}</p>
-                <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', margin: 0, letterSpacing: '0.05em' }}>{stat.label}</p>
-              </div>
+
+        <div className="flex gap-6 md:gap-12 mt-10 md:mt-[60px] flex-wrap justify-center md:justify-start w-full">
+          {[ 
+            ['Γ¡É 4.6', 'Average Rating'], 
+            ['Γ£ö 500+', 'Verified PGs'], 
+            ['≡ƒæÑ 10K+', 'Students Joined'] 
+          ].map(([v, l]) => (
+            <div key={l}>
+              <p className="text-xl font-extrabold text-white">{v}</p>
+              <p className="text-xs text-[#94A3B8] uppercase font-bold tracking-wider">{l}</p>
             </div>
           ))}
         </div>
@@ -801,33 +784,41 @@ function Hero({ searchCity, setSearchCity, isMobile }: { searchCity: string, set
   );
 }
 
-
-
+interface FiltersBarProps {
+  sharing: string;
+  setSharing: (v: string) => void;
+  budget: string;
+  setBudget: (v: string) => void;
+  verifiedOnly: boolean;
+  setVerifiedOnly: (v: boolean) => void;
+  sortBy: string;
+  setSortBy: (v: string) => void;
+}
 
 function FeatureStrip({ isMobile }: { isMobile: boolean }) {
   const features = [
     { 
       title: 'Verified Listings', 
       desc: 'Every property is physically verified by our team to ensure 100% accuracy.', 
-      icon: '🛡️',
+      icon: '≡ƒ¢í∩╕Å',
       color: '#E0F2FE'
     },
     { 
       title: 'Zero Brokerage', 
       desc: 'Connect directly with owners and skip the middleman. Save on unnecessary costs.', 
-      icon: '💎',
+      icon: '≡ƒÆÄ',
       color: '#FEF3C7'
     },
     { 
       title: 'Smart Matching', 
       desc: 'Our AI-powered algorithm finds roommates with similar lifestyles and habits.', 
-      icon: '🤝',
+      icon: '≡ƒñ¥',
       color: '#DCFCE7'
     },
     { 
       title: 'Near College', 
       desc: 'Exclusively mapped colleges and workplaces for ultra-precise distance search.', 
-      icon: '🎓',
+      icon: '≡ƒÄô',
       color: '#F3E8FF'
     }
   ];
@@ -886,9 +877,9 @@ function FeatureStrip({ isMobile }: { isMobile: boolean }) {
 
 function HowItWorks({ isMobile }: { isMobile: boolean }) {
   const steps = [
-    { title: 'Search PG', desc: 'Filter by city, budget, and sharing preferences.', icon: '🔍' },
-    { title: 'Compare & Visit', desc: 'Compare listings and schedule a physical visit.', icon: '📅' },
-    { title: 'Book & Move In', desc: 'Complete paperless booking and settle in easily.', icon: '🎉' }
+    { title: 'Search PG', desc: 'Filter by city, budget, and sharing preferences.', icon: '≡ƒöì' },
+    { title: 'Compare & Visit', desc: 'Compare listings and schedule a physical visit.', icon: '≡ƒôà' },
+    { title: 'Book & Move In', desc: 'Complete paperless booking and settle in easily.', icon: '≡ƒÄë' }
   ];
 
   return (
@@ -983,7 +974,7 @@ function FiltersBar({
             boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)' 
           }} 
         />
-        <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: COLORS.orange, fontSize: '20px' }}>🔍</div>
+        <div style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: COLORS.orange, fontSize: '20px' }}>≡ƒöì</div>
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'flex-end' }}>
@@ -1033,7 +1024,7 @@ function FiltersBar({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: '200px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, letterSpacing: '0.05em' }}>BUDGET</span>
-            <span style={{ fontSize: '13px', fontWeight: 800, color: COLORS.orange }}>₹{priceRange[1].toLocaleString()}</span>
+            <span style={{ fontSize: '13px', fontWeight: 800, color: COLORS.orange }}>Γé╣{priceRange[1].toLocaleString()}</span>
           </div>
           <input 
             type="range" 
@@ -1121,11 +1112,11 @@ function PGCard({ pg, isSelected, onCompare, onBook }: PGCardProps) {
             background: 'white', color: COLORS.dark, fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '100px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
           }}>
-            ⭐ {pg.rating}
+            Γ¡É {pg.rating}
           </span>
           {pg.verified && (
             <span style={{ background: COLORS.success, color: 'white', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '100px', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
-              ✅ Verified
+              Γ£à Verified
             </span>
           )}
         </div>
@@ -1142,7 +1133,7 @@ function PGCard({ pg, isSelected, onCompare, onBook }: PGCardProps) {
         </div>
         
         <span style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))' }}>
-          {pg.gender === 'Girls' ? '🏠' : pg.gender === 'Boys' ? '🏢' : '🏡'}
+          {pg.gender === 'Girls' ? '≡ƒÅá' : pg.gender === 'Boys' ? '≡ƒÅó' : '≡ƒÅí'}
         </span>
       </div>
 
@@ -1172,7 +1163,7 @@ function PGCard({ pg, isSelected, onCompare, onBook }: PGCardProps) {
         
         <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ fontSize: '22px', fontWeight: 900, color: COLORS.orange }}>₹{pg.rent.toLocaleString()}</span>
+            <span style={{ fontSize: '22px', fontWeight: 900, color: COLORS.orange }}>Γé╣{pg.rent.toLocaleString()}</span>
             <span style={{ fontSize: '12px', color: COLORS.text2, fontWeight: 700 }}>/mo</span>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -1220,8 +1211,8 @@ function CompareFloat({ count, onClear, onCompare }: { count: number, onClear: (
         {Array(count).fill(0).map((_, i) => <div key={i} style={{ width: '20px', height: '20px', borderRadius: '50%', background: COLORS.orange, border: `2px solid ${COLORS.dark}`, marginLeft: '4px' }} />)}
       </div>
       <span style={{ fontSize: '14px', fontWeight: 700 }}>{count} PGs selected</span>
-      <button onClick={onCompare} style={{ background: COLORS.white, color: COLORS.dark, border: 'none', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}>Compare Now →</button>
-      <button onClick={onClear} style={{ background: 'none', border: 'none', color: COLORS.white, fontSize: '18px', cursor: 'pointer' }}>✕</button>
+      <button onClick={onCompare} style={{ background: COLORS.white, color: COLORS.dark, border: 'none', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}>Compare Now ΓåÆ</button>
+      <button onClick={onClear} style={{ background: 'none', border: 'none', color: COLORS.white, fontSize: '18px', cursor: 'pointer' }}>Γ£ò</button>
     </div>
   );
 }
@@ -1237,20 +1228,20 @@ interface RoommateSectionProps {
 
 function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatching }: RoommateSectionProps) {
   const sleepOptions = [
-    { label: 'Early Bird', value: 'Early Bird', icon: '☀️' },
-    { label: 'Night Owl', value: 'Night Owl', icon: '🌙' }
+    { label: 'Early Bird', value: 'Early Bird', icon: 'ΓÿÇ∩╕Å' },
+    { label: 'Night Owl', value: 'Night Owl', icon: '≡ƒîÖ' }
   ];
   
   const cleanOptions = [
-    { label: 'Immaculate', value: 'High', icon: '✨' },
-    { label: 'Standard', value: 'Medium', icon: '🧹' },
-    { label: 'Flexible', value: 'Low', icon: '🧸' }
+    { label: 'Immaculate', value: 'High', icon: 'Γ£¿' },
+    { label: 'Standard', value: 'Medium', icon: '≡ƒº╣' },
+    { label: 'Flexible', value: 'Low', icon: '≡ƒº╕' }
   ];
 
   const socialOptions = [
-    { label: 'Introvert', value: 'Introvert', icon: '🧘' },
-    { label: 'Extrovert', value: 'Extrovert', icon: '🎉' },
-    { label: 'Ambivert', value: 'Ambivert', icon: '⚖️' }
+    { label: 'Introvert', value: 'Introvert', icon: '≡ƒºÿ' },
+    { label: 'Extrovert', value: 'Extrovert', icon: '≡ƒÄë' },
+    { label: 'Ambivert', value: 'Ambivert', icon: 'ΓÜû∩╕Å' }
   ];
 
   return (
@@ -1299,7 +1290,7 @@ function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatchin
             <div style={{ marginBottom: '40px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Max Monthly Budget</p>
-                <span style={{ fontSize: '14px', fontWeight: 800, color: COLORS.orange }}>₹20,000+</span>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: COLORS.orange }}>Γé╣20,000+</span>
               </div>
               <input type="range" min="0" max="25000" step="1000" style={{ width: '100%', accentColor: COLORS.orange, cursor: 'pointer' }} />
             </div>
@@ -1318,7 +1309,7 @@ function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatchin
               {isMatching ? (
                 <>Matching...</>
               ) : (
-                <>Compare Compatibility →</>
+                <>Compare Compatibility ΓåÆ</>
               )}
             </button>
           </div>
@@ -1335,7 +1326,7 @@ function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatchin
             </div>
           ) : results.length === 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: '60px', background: 'rgba(255,255,255,0.02)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <div style={{ fontSize: '80px', marginBottom: '32px', opacity: 0.8 }}>🎭</div>
+              <div style={{ fontSize: '80px', marginBottom: '32px', opacity: 0.8 }}>≡ƒÄ¡</div>
               <h3 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '12px' }}>Your Ideal Match Awaits</h3>
               <p style={{ color: '#94A3B8', fontSize: '15px', maxWidth: '320px', lineHeight: 1.6 }}>Set your preferences on the left to discover people you'll actually enjoy living with.</p>
             </div>
@@ -1362,7 +1353,7 @@ function RoommateSection({ form, setForm, onSubmit, results, isMobile, isMatchin
                     <div style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', border: '1px solid rgba(255,255,255,0.1)' }}>{mate.emoji}</div>
                     <div>
                       <h4 style={{ fontSize: '18px', fontWeight: 800 }}>{mate.name}</h4>
-                      <p style={{ fontSize: '12px', color: COLORS.orangeLight, fontWeight: 700 }}>VERIFIED PROFILE ✓</p>
+                      <p style={{ fontSize: '12px', color: COLORS.orangeLight, fontWeight: 700 }}>VERIFIED PROFILE Γ£ô</p>
                     </div>
                   </div>
                   
@@ -1448,10 +1439,10 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
   const [showSuccess, setShowSuccess] = useState(false);
 
   const stats = [
-    { label: 'Active Listings', value: listings.length, icon: '🏠', trend: '+12%', color: COLORS.orange },
-    { label: 'Tenant Leads', value: listings.length * 8, icon: '🎯', trend: '+5%', color: '#10B981' },
-    { label: 'Views (30d)', value: '1,240', icon: '👁️', trend: '+22%', color: '#3B82F6' },
-    { label: 'Est. Revenue', value: '₹45K', icon: '💰', trend: '+8%', color: '#F59E0B' },
+    { label: 'Active Listings', value: listings.length, icon: '≡ƒÅá', trend: '+12%', color: COLORS.orange },
+    { label: 'Tenant Leads', value: listings.length * 8, icon: '≡ƒÄ»', trend: '+5%', color: '#10B981' },
+    { label: 'Views (30d)', value: '1,240', icon: '≡ƒæü∩╕Å', trend: '+22%', color: '#3B82F6' },
+    { label: 'Est. Revenue', value: 'Γé╣45K', icon: '≡ƒÆ░', trend: '+8%', color: '#F59E0B' },
   ];
 
   const benefits = [
@@ -1489,7 +1480,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
     }, 2000);
   };
 
-  const SidebarItem = ({ id, label, icon }: { id: LandlordTab, label: string, icon: React.ReactNode }) => (
+  const SidebarItem = ({ id, label, icon }: { id: LandlordTab, label: string, icon: string }) => (
     <button 
       onClick={() => setTab(id)}
       style={{
@@ -1499,8 +1490,8 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
         transition: 'all 0.2s', textAlign: 'left', marginBottom: '4px'
       }}
     >
-      <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>
-      {!isMobile && <span>{label}</span>}
+      <span style={{ fontSize: '18px' }}>{icon}</span>
+      {!isMobile && label}
     </button>
   );
 
@@ -1522,65 +1513,49 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '280px 1fr', gap: '40px' }}>
           {/* Sidebar */}
           <aside style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '8px', overflowX: isMobile ? 'auto' : 'visible', paddingBottom: isMobile ? '16px' : 0 }}>
-            <SidebarItem id="dashboard" label="Overview" icon="📊" />
-            <SidebarItem id="listings" label="My Properties" icon="🏢" />
-            <SidebarItem id="add" label="List New PG" icon="➕" />
-            <SidebarItem id="bookings" label="Bookings" icon="📅" />
-            <SidebarItem id="payments" label="Financials" icon="💳" />
+            <SidebarItem id="dashboard" label="Overview" icon="≡ƒôè" />
+            <SidebarItem id="listings" label="My Properties" icon="≡ƒÅÿ∩╕Å" />
+            <SidebarItem id="add" label="List New PG" icon="Γ£¿" />
+            <SidebarItem id="bookings" label="Bookings" icon="≡ƒôà" />
+            <SidebarItem id="payments" label="Financials" icon="≡ƒÆ░" />
           </aside>
 
           {/* Main Workspace */}
           <div style={{ background: COLORS.white, borderRadius: '32px', padding: isMobile ? '24px' : '40px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
             {tab === 'dashboard' && (
-              <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>Performance Overview</h3>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: COLORS.text2, background: COLORS.bg, padding: '8px 16px', borderRadius: '12px', border: `1px solid ${COLORS.border}` }}>
-                    Last 30 Days
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px' }}>
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '20px', marginBottom: '48px' }}>
                   {stats.map(s => (
-                    <div key={s.label} style={{ 
-                      background: COLORS.white, padding: '24px', borderRadius: '24px', 
-                      border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-                      display: 'flex', flexDirection: 'column', gap: '12px'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: COLORS.orangeDim, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-                          {s.label === 'Active Listings' ? '🏢' : s.label === 'Tenant Leads' ? '🏥' : s.label === 'Views (30d)' ? '👁️' : '💳'}
-                        </div>
-                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '4px 10px', borderRadius: '8px' }}>{s.trend}</span>
+                    <div key={s.label} style={{ background: '#F8FAFC', padding: '24px', borderRadius: '24px', border: `1px solid ${COLORS.border}88` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                        <span style={{ fontSize: '24px' }}>{s.icon}</span>
+                        <span style={{ fontSize: '11px', fontWeight: 800, color: '#10B981' }}>{s.trend}</span>
                       </div>
-                      <div>
-                        <h4 style={{ fontSize: '28px', fontWeight: 900, color: COLORS.dark, marginBottom: '2px' }}>{s.value}</h4>
-                        <p style={{ fontSize: '13px', color: COLORS.text2, fontWeight: 700, letterSpacing: '0.02em', textTransform: 'uppercase' }}>{s.label}</p>
-                      </div>
+                      <h4 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>{s.value}</h4>
+                      <p style={{ fontSize: '12px', color: COLORS.text2, fontWeight: 700, letterSpacing: '0.02em', textTransform: 'uppercase' }}>{s.label}</p>
                     </div>
                   ))}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.5fr 1fr', gap: '32px' }}>
-                  <div style={{ background: COLORS.dark, color: 'white', padding: '40px', borderRadius: '32px', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 40px rgba(15,23,42,0.2)' }}>
-                    <div style={{ position: 'relative', zIndex: 1, maxWidth: '340px' }}>
-                      <span style={{ background: COLORS.orange, color: 'white', fontSize: '11px', fontWeight: 900, padding: '6px 14px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'inline-block', marginBottom: '20px' }}>Pro Tip</span>
-                      <h4 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '16px', lineHeight: 1.2 }}>Boost Your Property Visibility by 3x</h4>
-                      <p style={{ fontSize: '15px', color: '#94A3B8', marginBottom: '32px', lineHeight: 1.6 }}>Physically verified properties earn the "Trust Seal" and appear at the top of all search results.</p>
-                      <button style={{ background: 'white', color: COLORS.dark, border: 'none', padding: '16px 32px', borderRadius: '16px', fontSize: '14px', fontWeight: 800, cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>Get Verified Now</button>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.5fr', gap: '40px' }}>
+                  <div style={{ background: COLORS.dark, color: 'white', padding: '32px', borderRadius: '24px', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <h4 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px' }}>Boost Your Listings</h4>
+                      <p style={{ fontSize: '14px', color: '#94A3B8', marginBottom: '24px', lineHeight: 1.5 }}>Verified properties appear at the top of search results and gain 65% more trust.</p>
+                      <button style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '12px 24px', borderRadius: '100px', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}>Apply for Verification</button>
                     </div>
-                    <div style={{ position: 'absolute', top: '10%', right: '-5%', fontSize: '180px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-15deg)' }}>🛡️</div>
+                    <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '100px', opacity: 0.1, pointerEvents: 'none' }}>≡ƒ¢í∩╕Å</div>
                   </div>
 
-                  <div style={{ background: COLORS.white, padding: '32px', borderRadius: '32px', border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '24px', color: COLORS.dark }}>Partner Benefits</h4>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <div>
+                    <h4 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '20px' }}>Partner Benefits</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       {benefits.map(b => (
                         <div key={b.title} style={{ display: 'flex', gap: '16px' }}>
-                          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: COLORS.orange, marginTop: '6px', flexShrink: 0, boxShadow: `0 0 10px ${COLORS.orange}66` }} />
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: COLORS.orange, marginTop: '7px', flexShrink: 0 }} />
                           <div>
-                            <h5 style={{ fontSize: '15px', fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{b.title}</h5>
-                            <p style={{ fontSize: '13px', color: COLORS.text2, lineHeight: 1.5 }}>{b.desc}</p>
+                            <h5 style={{ fontSize: '14px', fontWeight: 800, color: COLORS.dark }}>{b.title}</h5>
+                            <p style={{ fontSize: '13px', color: COLORS.text2, lineHeight: 1.4 }}>{b.desc}</p>
                           </div>
                         </div>
                       ))}
@@ -1590,62 +1565,6 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
               </div>
             )}
 
-            {tab === 'bookings' && (
-              <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>Recent Bookings</h3>
-                </div>
-                {listings.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                    <p style={{ color: COLORS.text2, fontWeight: 600 }}>No active bookings found</p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {listings.map((p, i) => (
-                      <div key={p.id} style={{ background: COLORS.white, borderRadius: '20px', padding: '24px', display: 'flex', alignItems: 'center', gap: '24px', border: `1px solid ${COLORS.border}55`, boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
-                        <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: COLORS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>
-                          📍
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <h4 style={{ fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>{p.name}</h4>
-                          <p style={{ fontSize: '14px', color: COLORS.text2 }}>Tenant #{1000 + i} · Visit Scheduled</p>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 900, padding: '6px 12px', borderRadius: '8px', background: i % 2 === 0 ? '#FEF3C7' : '#DCFCE7', color: i % 2 === 0 ? '#D97706' : '#16A34A' }}>
-                            {i % 2 === 0 ? 'PENDING' : 'CONFIRMED'}
-                          </span>
-                          <p style={{ fontSize: '12px', color: COLORS.text2, marginTop: '8px', fontWeight: 600 }}>May {12 + i}, 2026</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {tab === 'payments' && (
-              <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>Financial Portfolio</h3>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '24px', marginBottom: '40px' }}>
-                  {[
-                    { label: 'Gross Revenue', value: `₹${(listings.length * 8500).toLocaleString()}`, icon: '💳', color: '#F0F9FF', textColor: '#0369A1' },
-                    { label: 'Active Payouts', value: `₹${(listings.length * 6000).toLocaleString()}`, icon: '✅', color: '#F0FDF4', textColor: '#15803D' },
-                    { label: 'Receivables', value: `₹${(listings.length * 500).toLocaleString()}`, icon: '🔄', color: '#FFF7ED', textColor: '#C2410C' },
-                  ].map(item => (
-                    <div key={item.label} style={{ background: item.color, padding: '32px', borderRadius: '28px', border: `1px solid ${item.textColor}11` }}>
-                      <div style={{ color: item.textColor, marginBottom: '16px' }}>{item.icon}</div>
-                      <h4 style={{ fontSize: '32px', fontWeight: 900, color: COLORS.dark }}>{item.value}</h4>
-                      <p style={{ fontSize: '12px', fontWeight: 800, color: item.textColor, textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '6px' }}>{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-
-
             {tab === 'listings' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
@@ -1653,7 +1572,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                 </div>
                 {listings.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '80px 0' }}>
-                    <div style={{ fontSize: '64px', marginBottom: '24px' }}>🏘️</div>
+                    <div style={{ fontSize: '64px', marginBottom: '24px' }}>≡ƒÅÿ∩╕Å</div>
                     <h4 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '8px' }}>No Listings Yet</h4>
                     <p style={{ color: COLORS.text2, marginBottom: '32px' }}>Start earning by listing your first property on StayFinder.</p>
                     <button onClick={() => setTab('add')} style={{ background: COLORS.orange, color: 'white', border: 'none', padding: '16px 32px', borderRadius: '100px', fontWeight: 800, fontSize: '14px', cursor: 'pointer' }}>Get Started</button>
@@ -1672,7 +1591,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
               <div style={{ maxWidth: '720px', margin: '0 auto' }}>
                 {showSuccess ? (
                   <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                    <div style={{ fontSize: '80px', marginBottom: '24px', animation: 'bounce 1s infinite' }}>🎉</div>
+                    <div style={{ fontSize: '80px', marginBottom: '24px', animation: 'bounce 1s infinite' }}>≡ƒÄë</div>
                     <h3 style={{ fontSize: '28px', fontWeight: 900, color: COLORS.dark, marginBottom: '12px' }}>Property Listed!</h3>
                     <p style={{ color: COLORS.text2, fontSize: '16px' }}>Our verification team will review and activate it within 4 hours.</p>
                   </div>
@@ -1698,7 +1617,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                               <option>Pune</option><option>Mumbai</option><option>Bangalore</option><option>Hyderabad</option>
                             </select>
                           </div>
-                          <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', marginTop: '12px' }}>Next: Pricing & Details →</button>
+                          <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', marginTop: '12px' }}>Next: Pricing & Details ΓåÆ</button>
                         </div>
                       )}
                       {step === 2 && (
@@ -1706,11 +1625,11 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                           <p style={{ fontWeight: 800, color: COLORS.dark, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rental Structure</p>
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Monthly Rent (₹)</label>
+                              <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Monthly Rent (Γé╣)</label>
                               <input required type="number" style={inputStyle} value={form.rent} onChange={e => setForm({...form, rent: parseInt(e.target.value)})} />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Security Deposit (₹)</label>
+                              <label style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>Security Deposit (Γé╣)</label>
                               <input required type="number" style={inputStyle} value={form.deposit} onChange={e => setForm({...form, deposit: parseInt(e.target.value)})} />
                             </div>
                           </div>
@@ -1718,7 +1637,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                           <PillGroup label="Student Demographic" options={['Boys', 'Girls', 'Unisex']} value={form.gender} onChange={v => setForm({...form, gender: v as any})} />
                           <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                             <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, borderRadius: '100px', flex: 1 }}>Back</button>
-                            <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Amenities & Photos →</button>
+                            <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Amenities & Photos ΓåÆ</button>
                           </div>
                         </div>
                       )}
@@ -1738,13 +1657,13 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                             onMouseOver={e => e.currentTarget.style.borderColor = COLORS.orange}
                             onMouseOut={e => e.currentTarget.style.borderColor = COLORS.border}
                           >
-                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
+                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>≡ƒôñ</div>
                             <p style={{ fontWeight: 800, color: COLORS.dark, marginBottom: '4px' }}>Upload Property Photos</p>
                             <p style={{ fontSize: '12px', color: COLORS.text2 }}>Minimum 3 high-quality photos required.</p>
                           </div>
                           <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                             <button type="button" onClick={handlePrev} style={{ ...secondaryBtnStyle, borderRadius: '100px', flex: 1 }}>Back</button>
-                            <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Review & Publish →</button>
+                            <button type="button" onClick={handleNext} style={{ ...primaryBtnStyle, borderRadius: '100px', flex: 2 }}>Review & Publish ΓåÆ</button>
                           </div>
                         </div>
                       )}
@@ -1755,10 +1674,10 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
                               <div>
                                 <h4 style={{ fontWeight: 800, fontSize: '20px', marginBottom: '4px' }}>{form.name || 'Untitled Property'}</h4>
-                                <p style={{ fontSize: '13px', color: COLORS.text2 }}>{form.city} · {form.roomType}</p>
+                                <p style={{ fontSize: '13px', color: COLORS.text2 }}>{form.city} ┬╖ {form.roomType}</p>
                               </div>
                               <div style={{ textAlign: 'right' }}>
-                                <p style={{ fontSize: '24px', fontWeight: 900, color: COLORS.orange }}>₹{form.rent?.toLocaleString()}</p>
+                                <p style={{ fontSize: '24px', fontWeight: 900, color: COLORS.orange }}>Γé╣{form.rent?.toLocaleString()}</p>
                                 <p style={{ fontSize: '12px', fontWeight: 700, color: COLORS.text2 }}>PER MONTH</p>
                               </div>
                             </div>
@@ -1766,7 +1685,7 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                               <div>
                                 <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>Security Deposit</p>
-                                <p style={{ fontSize: '14px', fontWeight: 700 }}>₹{form.deposit?.toLocaleString()}</p>
+                                <p style={{ fontSize: '14px', fontWeight: 700 }}>Γé╣{form.deposit?.toLocaleString()}</p>
                               </div>
                               <div>
                                 <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '8px' }}>Contact</p>
@@ -1799,8 +1718,8 @@ function ContactHelpSection({ isMobile }: { isMobile: boolean }) {
         <h2 style={{ fontSize: '32px', fontWeight: 800, color: COLORS.dark, marginBottom: '40px' }}>Need Help Styling Your Journey?</h2>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '30px' }}>
           {[
-            { title: 'Support Email', value: 'stayfinder.team@gmail.com', icon: '✉️', color: '#E0F2FE' },
-            { title: 'Contact Support', value: '+91 9579583569', icon: '📞', color: '#FEF3C7' }
+            { title: 'Support Email', value: 'stayfinder.team@gmail.com', icon: 'Γ£ë∩╕Å', color: '#E0F2FE' },
+            { title: 'Contact Support', value: '+91 9579583569', icon: '≡ƒô₧', color: '#FEF3C7' }
           ].map(item => (
             <div key={item.title} style={{ 
               background: COLORS.white, padding: '32px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '24px', 
@@ -1907,12 +1826,12 @@ function ChipSelector({ label, options, selected, onChange }: { label: string, o
 function DashboardListingCard({ pg, onDelete }: { pg: LandlordPG, onDelete: (id: string) => void, key?: React.Key }) {
   return (
     <div style={{ display: 'flex', background: COLORS.white, borderRadius: '20px', border: `1px solid ${COLORS.border}44`, overflow: 'hidden', padding: '16px', gap: '20px', alignItems: 'center' }}>
-      <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: COLORS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px' }}>🏠</div>
+      <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: COLORS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px' }}>≡ƒÅá</div>
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h4 style={{ fontWeight: 800, color: COLORS.dark }}>{pg.name}</h4>
-            <p style={{ fontSize: '12px', color: COLORS.text2 }}>{pg.city} · ₹{pg.rent.toLocaleString()}/mo</p>
+            <p style={{ fontSize: '12px', color: COLORS.text2 }}>{pg.city} ┬╖ Γé╣{pg.rent.toLocaleString()}/mo</p>
           </div>
           <span style={{ 
             fontSize: '10px', fontWeight: 800, padding: '4px 10px', borderRadius: '6px',
@@ -1924,7 +1843,7 @@ function DashboardListingCard({ pg, onDelete }: { pg: LandlordPG, onDelete: (id:
         </div>
         <div style={{ display: 'flex', gap: '20px', marginTop: '12px', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px' }}>👁️</span>
+            <span style={{ fontSize: '14px' }}>≡ƒæü∩╕Å</span>
             <span style={{ fontSize: '12px', fontWeight: 700, color: COLORS.dark }}>{pg.views || 0} Views</span>
           </div>
           <div style={{ display: 'flex', gap: '10px', marginLeft: 'auto' }}>
@@ -1976,7 +1895,7 @@ function Modal({ isOpen, onClose, title, children, maxWidth = '600px' }: ModalPr
       >
         <div style={{ padding: '32px', borderBottom: `1px solid ${COLORS.border}55`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
           <h2 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.dark }}>{title}</h2>
-          <button onClick={onClose} style={{ background: COLORS.bg, border: 'none', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', fontSize: '20px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+          <button onClick={onClose} style={{ background: COLORS.bg, border: 'none', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', fontSize: '20px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Γ£ò</button>
         </div>
         <div style={{ padding: '32px' }}>{children}</div>
       </div>
@@ -2024,11 +1943,11 @@ function BookingModal({ isOpen, onClose, pg, isMobile }: BookingModalProps) {
               <div>
                 <h4 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>{pg.name}</h4>
                 <p style={{ fontSize: '14px', color: COLORS.text2, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <MapPin size={14} /> {pg.address} · {pg.distance} km from college
+                  <MapPin size={14} /> {pg.address} ┬╖ {pg.distance} km from college
                 </p>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ fontSize: '24px', fontWeight: 900, color: COLORS.orange }}>₹{pg.rent.toLocaleString()}</p>
+                <p style={{ fontSize: '24px', fontWeight: 900, color: COLORS.orange }}>Γé╣{pg.rent.toLocaleString()}</p>
                 <p style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2 }}>MONTHLY RENT</p>
               </div>
             </div>
@@ -2078,7 +1997,7 @@ function BookingModal({ isOpen, onClose, pg, isMobile }: BookingModalProps) {
         </div>
       ) : (
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <div style={{ fontSize: '60px', marginBottom: '20px' }}>🎯</div>
+          <div style={{ fontSize: '60px', marginBottom: '20px' }}>≡ƒÄ»</div>
           <h3 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '12px' }}>Request Sent!</h3>
           <p style={{ color: COLORS.text2, marginBottom: '30px', fontSize: '16px' }}>The landlord of <b>{pg.name}</b> will contact you shortly to finalize your stay.</p>
           <button onClick={onClose} style={{ display: 'block', margin: '0 auto', background: COLORS.orange, color: 'white', border: 'none', padding: '16px 40px', borderRadius: '100px', fontWeight: 800, cursor: 'pointer' }}>Return to Explore</button>
@@ -2102,10 +2021,10 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
   
   const features = [
     { label: 'Gender', key: 'gender' },
-    { label: 'Monthly Rent', key: 'rent', format: (v: number) => `₹${v.toLocaleString()}` },
+    { label: 'Monthly Rent', key: 'rent', format: (v: number) => `Γé╣${v.toLocaleString()}` },
     { label: 'Room Type', key: 'room_type' },
     { label: 'To College', key: 'distance', format: (v: number) => `${v} km` },
-    { label: 'Expert Rating', key: 'rating', format: (v: number) => `⭐ ${v}` },
+    { label: 'Expert Rating', key: 'rating', format: (v: number) => `Γ¡É ${v}` },
     { label: 'Amenities', key: 'facilities', format: (v: string[]) => v.slice(0, 3).join(', ') + (v.length > 3 ? '...' : '') },
   ];
 
@@ -2116,19 +2035,10 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
           <div />
           {pgs.map(pg => (
             <div key={pg.id} style={{ textAlign: 'center', position: 'relative' }}>
-              <div style={{ 
-                width: '100%', aspectRatio: '16/10', borderRadius: '20px', 
-                background: `linear-gradient(135deg, ${pg.colors[0]}, ${pg.colors[1]})`, 
-                marginBottom: '16px', display: 'flex', alignItems: 'center', 
-                justifyContent: 'center', color: 'white', boxShadow: '0 10px 20px rgba(0,0,0,0.08)' 
-              }}>
-                <span style={{ fontSize: '40px' }}>
-                  {pg.gender === 'Girls' ? '🏠' : pg.gender === 'Boys' ? '🏢' : '🏡'}
-                </span>
-              </div>
-              <h4 style={{ fontSize: '16px', fontWeight: 900, color: COLORS.dark, marginBottom: '6px' }}>{pg.name}</h4>
+              <div style={{ width: '100%', aspectRatio: '16/10', borderRadius: '20px', background: `linear-gradient(135deg, ${pg.colors[0]}, ${pg.colors[1]})`, marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>≡ƒÅá</div>
+              <h4 style={{ fontSize: '18px', fontWeight: 900, color: COLORS.dark, marginBottom: '6px' }}>{pg.name}</h4>
               {pg.id === bestId && (
-                <div style={{ background: COLORS.orange, color: 'white', fontSize: '10px', fontWeight: 900, padding: '4px 12px', borderRadius: '100px', display: 'inline-block', letterSpacing: '0.05em', boxShadow: `0 4px 10px ${COLORS.orange}44` }}>BEST VALUE</div>
+                <div style={{ background: COLORS.orange, color: 'white', fontSize: '10px', fontWeight: 900, padding: '4px 12px', borderRadius: '100px', display: 'inline-block', letterSpacing: '0.05em' }}>BEST VALUE</div>
               )}
             </div>
           ))}
@@ -2155,7 +2065,7 @@ function CompareModal({ isOpen, onClose, ids, bestId, isMobile, allPgs }: Compar
                      fontSize: '15px', fontWeight: isBest ? 900 : 600, textAlign: 'center', color: isBest ? COLORS.success : COLORS.dark,
                      background: isBest ? 'rgba(16,185,129,0.05)' : 'transparent', padding: '8px', borderRadius: '12px'
                    }}>
-                     {isBest && '✓ '} {f.format ? f.format(val) : val}
+                     {isBest && 'Γ£ô '} {f.format ? f.format(val) : val}
                    </div>
                  );
                })}
@@ -2199,7 +2109,7 @@ function ListYourPGModal({ isOpen, onClose }: ListYourPGModalProps) {
         </form>
       ) : (
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <div style={{ fontSize: '60px', marginBottom: '20px' }}>📧</div>
+          <div style={{ fontSize: '60px', marginBottom: '20px' }}>≡ƒôº</div>
           <h3 style={{ fontSize: '24px', marginBottom: '12px' }}>Request Received</h3>
           <p style={{ color: COLORS.text2, marginBottom: '30px' }}>Our team will contact you to verify and list your property.</p>
           <button onClick={onClose} style={{ display: 'block', margin: '0 auto', background: COLORS.dark, color: 'white', border: 'none', padding: '12px 30px', borderRadius: '10px', fontWeight: 700 }}>Awesome</button>
@@ -2220,7 +2130,7 @@ function Footer() {
           <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '24px', letterSpacing: '-0.02em' }}>STAY<span style={{ color: COLORS.orange }}>FINDER.</span></h2>
           <p style={{ color: '#94A3B8', lineHeight: 1.8, maxWidth: '320px', marginBottom: '32px' }}>India's most trusted student housing platform. We help you find a home away from home, with zero stress and maximum comfort.</p>
           <div style={{ display: 'flex', gap: '16px' }}>
-            {['𝕏', '📸', '💼', '📘'].map(icon => (
+            {['≡¥òÅ', '≡ƒô╕', '≡ƒÆ╝', '≡ƒôÿ'].map(icon => (
               <a key={icon} href="#" style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', textDecoration: 'none', transition: 'all 0.3s' }}>
                 {icon}
               </a>
@@ -2248,7 +2158,7 @@ function Footer() {
       </div>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-        <p style={{ color: '#64748B', fontSize: '14px', fontWeight: 500 }}>© {years} StayFinder Technologies. All rights reserved.</p>
+        <p style={{ color: '#64748B', fontSize: '14px', fontWeight: 500 }}>┬⌐ {years} StayFinder Technologies. All rights reserved.</p>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="#" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Privacy</a>
           <a href="#" style={{ color: '#64748B', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Terms</a>
