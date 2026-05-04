@@ -4,7 +4,7 @@ dotenv.config();
 import path from "path";
 import axios from "axios";
 import { GoogleGenAI } from "@google/genai";
-import { getDb, User } from "../db.js";
+import { getDb, UserCollection, FeedbackCollection } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
@@ -45,15 +45,19 @@ const authenticateToken = (req: any, res: any, next: any) => {
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password, role, user_type } = req.body;
-    const existingUser = await User.findOne({ email }).lean();
-    if (existingUser) return res.status(400).json({ error: "Email already exists" });
+    
+    const userSnapshot = await UserCollection.where('email', '==', email).get();
+    if (!userSnapshot.empty) return res.status(400).json({ error: "Email already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = crypto.randomUUID();
     
-    await User.create({
-      id, name, email, password: hashedPassword, role: role || "tenant", user_type: user_type || null, profile_completed: false
-    });
+    const userData = {
+      id, name, email, password: hashedPassword, role: role || "tenant", user_type: user_type || null, profile_completed: false,
+      createdAt: new Date().toISOString()
+    };
+    
+    await UserCollection.doc(id).set(userData);
 
     const token = jwt.sign({ id, email }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: { id, name, email, role: role || "tenant", user_type: user_type || null, profile_completed: false } });
@@ -66,15 +70,19 @@ app.post("/api/auth/signup", async (req, res) => {
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email }).lean();
-    if (!user || !user.password) return res.status(400).json({ error: "Invalid credentials" });
+    
+    const userSnapshot = await UserCollection.where('email', '==', email).get();
+    if (userSnapshot.empty) return res.status(400).json({ error: "Invalid credentials" });
+    
+    const user = userSnapshot.docs[0].data();
+    if (!user.password) return res.status(400).json({ error: "Invalid credentials" });
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).json({ error: "Invalid credentials" });
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
     
-    const { password: _, _id, __v, ...userWithoutPassword } = user as any;
+    const { password: _, ...userWithoutPassword } = user as any;
     res.json({ token, user: { ...userWithoutPassword, profile_completed: !!userWithoutPassword.profile_completed } });
   } catch (error) {
     console.error(error);
@@ -85,47 +93,37 @@ app.post("/api/auth/login", async (req, res) => {
 app.post("/api/auth/google", async (req, res) => {
   try {
     const { credential, role, user_type } = req.body;
-    console.log("Processing Google Auth for role:", role);
     
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.VITE_GOOGLE_CLIENT_ID || "placeholder-client-id"
     }).catch(async (err) => {
-       console.warn("Google verify failed, decoding token directly for local testing:", err.message);
        const payload = jwt.decode(credential) as any;
        if (!payload) throw new Error("Invalid token format");
        return { getPayload: () => payload };
     });
     
     const payload = ticket.getPayload();
-    if (!payload) {
-      console.error("No payload found in Google token");
-      return res.status(400).json({ error: "Invalid Google token payload" });
-    }
+    if (!payload) return res.status(400).json({ error: "Invalid Google token payload" });
 
     const { email, name } = payload;
-    console.log("Google User:", { email, name });
     
-    let user = await User.findOne({ email }).lean();
+    const userSnapshot = await UserCollection.where('email', '==', email).get();
+    let user;
 
-    if (!user) {
-      console.log("Creating new user via Google Sign-in...");
+    if (userSnapshot.empty) {
       const id = crypto.randomUUID();
-      try {
-        await User.create({
-          id, name, email, role: role || "tenant", user_type: user_type || null, profile_completed: false
-        });
-        user = await User.findOne({ id }).lean();
-      } catch (createErr: any) {
-        console.error("Error creating user in DB:", createErr.message);
-        throw new Error("Failed to create user in database");
-      }
+      user = {
+        id, name, email, role: role || "tenant", user_type: user_type || null, profile_completed: false,
+        createdAt: new Date().toISOString()
+      };
+      await UserCollection.doc(id).set(user);
+    } else {
+      user = userSnapshot.docs[0].data();
     }
 
-    if (!user) throw new Error("User retrieval failed after creation");
-
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-    const { password: _, _id, __v, ...userWithoutPassword } = user as any;
+    const { password: _, ...userWithoutPassword } = user as any;
     res.json({ token, user: { ...userWithoutPassword, profile_completed: !!userWithoutPassword.profile_completed } });
   } catch (error: any) {
     console.error("Google auth error detailed:", error);
@@ -135,14 +133,70 @@ app.post("/api/auth/google", async (req, res) => {
 
 app.get("/api/users/me", authenticateToken, async (req: any, res) => {
   try {
-    const user = await User.findOne({ id: req.user.id }).lean();
-    if (!user) return res.status(404).json({ error: "User not found" });
+    const userDoc = await UserCollection.doc(req.user.id).get();
+    if (!userDoc.exists) return res.status(404).json({ error: "User not found" });
 
-    const { password: _, _id, __v, ...userWithoutPassword } = user as any;
+    const user = userDoc.data();
+    const { password: _, ...userWithoutPassword } = user as any;
     res.json({ user: { ...userWithoutPassword, profile_completed: !!userWithoutPassword.profile_completed } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch user" });
+  }
+});
+
+app.put("/api/users/update", authenticateToken, async (req: any, res) => {
+  try {
+    const { role, user_type, profile_data } = req.body;
+
+    await UserCollection.doc(req.user.id).update({
+      role, 
+      user_type: user_type || null, 
+      profile_data, 
+      profile_completed: true,
+      updatedAt: new Date().toISOString()
+    });
+
+    const userDoc = await UserCollection.doc(req.user.id).get();
+    const user = userDoc.data();
+    const { password: _, ...userWithoutPassword } = user as any;
+    
+    res.json({ message: "Profile updated", user: { ...userWithoutPassword, profile_completed: true } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+});
+
+// Feedback Endpoints
+app.post("/api/feedback", async (req, res) => {
+  try {
+    const { name, email, user_type, rating, experience_type, message, improvement } = req.body;
+    if (!name || !email || !user_type || !rating || !experience_type || !message) {
+      return res.status(400).json({ error: "All required fields must be filled" });
+    }
+    
+    const feedbackData = {
+      name, email, user_type, rating, experience_type, message, improvement,
+      createdAt: new Date().toISOString()
+    };
+    
+    const docRef = await FeedbackCollection.add(feedbackData);
+    res.status(201).json({ id: docRef.id, ...feedbackData });
+  } catch (error) {
+    console.error("Error creating feedback:", error);
+    res.status(500).json({ error: "Failed to submit feedback" });
+  }
+});
+
+app.get("/api/feedback", async (req, res) => {
+  try {
+    const feedbackSnapshot = await FeedbackCollection.orderBy('createdAt', 'desc').get();
+    const feedbacks = feedbackSnapshot.docs.map(doc => ({ _id: doc.id, ...doc.data() }));
+    res.json(feedbacks);
+  } catch (error) {
+    console.error("Error fetching feedback:", error);
+    res.status(500).json({ error: "Failed to fetch feedback" });
   }
 });
 
@@ -155,24 +209,6 @@ app.get("/api/pgs", async (req, res) => {
   } catch (error) {
     console.error("Error serving PGs:", error);
     res.status(500).json({ error: "Failed to fetch pgs" });
-  }
-});
-
-app.put("/api/users/update", authenticateToken, async (req: any, res) => {
-  try {
-    const { role, user_type, profile_data } = req.body;
-    await User.findOneAndUpdate(
-      { id: req.user.id },
-      { role, user_type: user_type || null, profile_data, profile_completed: true },
-      { new: true }
-    );
-    const user = await User.findOne({ id: req.user.id }).lean();
-    if (!user) return res.status(404).json({ error: "User not found" });
-    const { password: _, _id, __v, ...userWithoutPassword } = user as any;
-    res.json({ message: "Profile updated", user: { ...userWithoutPassword, profile_completed: true } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to update profile" });
   }
 });
 
