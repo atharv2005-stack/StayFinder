@@ -1,18 +1,34 @@
 import admin from 'firebase-admin';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Find the service account key file
-const serviceAccountPath = join(process.cwd(), 'stayfinder-eb507-firebase-adminsdk-fbsvc-b58e13bb59.json');
-const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
-
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
-  console.log('Successfully connected to Firebase Firestore.');
+  try {
+    let serviceAccount: any;
+
+    // 1. Try to load from Environment Variable (Production)
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } 
+    // 2. Fallback to Local JSON File (Development)
+    else {
+      const localKeyPath = join(process.cwd(), 'stayfinder-eb507-firebase-adminsdk-fbsvc-b58e13bb59.json');
+      if (existsSync(localKeyPath)) {
+        serviceAccount = JSON.parse(readFileSync(localKeyPath, 'utf8'));
+      } else {
+        throw new Error('Firebase Service Account key not found in ENV or local file.');
+      }
+    }
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('Successfully connected to Firebase Firestore.');
+  } catch (err: any) {
+    console.error('Firebase initialization error:', err.message);
+  }
 }
 
 export const db = admin.firestore();
@@ -43,7 +59,7 @@ export interface IFeedback {
   createdAt: any;
 }
 
-// Helper function to maintain the same API structure in server.ts as much as possible
+// Helper function
 export const getDb = async () => {
   return db;
 };
