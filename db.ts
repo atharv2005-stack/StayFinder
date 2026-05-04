@@ -54,3 +54,29 @@ const userSchema = new mongoose.Schema({
 
 // Avoid OverwriteModelError if the model is already compiled
 export const User = (mongoose.models.User || mongoose.model<IUser>('User', userSchema)) as mongoose.Model<IUser>;
+
+export interface IFeedback extends mongoose.Document {
+  name: string;
+  email: string;
+  user_type: 'Student' | 'Working Professional' | 'Landlord';
+  rating: number;
+  experience_type: 'Finding PG' | 'Listing Property' | 'Roommate Matching' | 'Overall Experience';
+  message: string;
+  improvement?: string;
+  createdAt: Date;
+}
+
+const feedbackSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  user_type: { type: String, enum: ['Student', 'Working Professional', 'Landlord'], required: true },
+  rating: { type: Number, min: 1, max: 5, required: true },
+  experience_type: { type: String, enum: ['Finding PG', 'Listing Property', 'Roommate Matching', 'Overall Experience'], required: true },
+  message: { type: String, required: true },
+  improvement: { type: String }
+}, {
+  timestamps: true
+});
+
+export const Feedback = (mongoose.models.Feedback || mongoose.model<IFeedback>('Feedback', feedbackSchema)) as mongoose.Model<IFeedback>;
+

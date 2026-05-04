@@ -4,7 +4,7 @@ dotenv.config();
 import path from "path";
 import axios from "axios";
 import { GoogleGenAI } from "@google/genai";
-import { getDb, User } from "./db.js";
+import { getDb, User, Feedback } from "./db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
@@ -164,6 +164,33 @@ app.put("/api/users/update", authenticateToken, async (req: any, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to update profile" });
+  }
+});
+
+// Feedback Endpoints
+app.post("/api/feedback", async (req, res) => {
+  try {
+    const { name, email, user_type, rating, experience_type, message, improvement } = req.body;
+    if (!name || !email || !user_type || !rating || !experience_type || !message) {
+      return res.status(400).json({ error: "All required fields must be filled" });
+    }
+    const feedback = await Feedback.create({
+      name, email, user_type, rating, experience_type, message, improvement
+    });
+    res.status(201).json(feedback);
+  } catch (error) {
+    console.error("Error creating feedback:", error);
+    res.status(500).json({ error: "Failed to submit feedback" });
+  }
+});
+
+app.get("/api/feedback", async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find().sort({ createdAt: -1 });
+    res.json(feedbacks);
+  } catch (error) {
+    console.error("Error fetching feedback:", error);
+    res.status(500).json({ error: "Failed to fetch feedback" });
   }
 });
 

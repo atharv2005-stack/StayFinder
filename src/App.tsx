@@ -20,6 +20,8 @@ import { AuthEntry } from './components/AuthEntry';
 import { AuthPage } from './components/AuthPage';
 import { CompleteProfile } from './components/CompleteProfile';
 import { ProfilePage } from './components/ProfilePage';
+import { FeedbackSection } from './components/FeedbackSection';
+
 
 import rawPgData from '../mitaoe_pg_listings.json';
 
@@ -503,7 +505,10 @@ export default function App() {
         onCompare={() => setShowCompareModal(true)} 
       />
 
+      <FeedbackSection />
+
       <Footer />
+
 
       <AIChatbot pgs={pgData} />
 
@@ -559,11 +564,12 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
 
         {!isMobile && (
           <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Help'].map(l => {
+            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Feedback', 'Help'].map(l => {
               let href = '#';
               if (l === 'Explore PGs') href = '#explore';
               if (l === 'Roommate Matching') href = '#roommate';
               if (l === 'Landlord Panel') href = '/dashboard';
+              if (l === 'Feedback') href = '#feedback';
               if (l === 'Help') href = '/contact';
 
               return (
@@ -587,6 +593,18 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
                       } else {
                         e.preventDefault();
                         document.getElementById(href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else if (l === 'Feedback') {
+                      if (window.location.pathname !== '/') {
+                        e.preventDefault();
+                        window.history.pushState({}, '', '/');
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                        setTimeout(() => {
+                          document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      } else {
+                        e.preventDefault();
+                        document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' });
                       }
                     }
                   }}
@@ -668,11 +686,12 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
               flexDirection: 'column', gap: '20px', border: `1px solid ${COLORS.border}55` 
             }}
           >
-            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Help'].map(l => {
+            {['Explore PGs', 'Roommate Matching', 'Landlord Panel', 'Feedback', 'Help'].map(l => {
               let href = '#';
               if (l === 'Explore PGs') href = '#explore';
               if (l === 'Roommate Matching') href = '#roommate';
               if (l === 'Landlord Panel') href = '/dashboard';
+              if (l === 'Feedback') href = '#feedback';
               if (l === 'Help') href = '/contact';
 
               return (
@@ -697,6 +716,18 @@ function Navbar({ scrolled, isMobile, onListClick, user, logout }: { scrolled: b
                       } else {
                         e.preventDefault();
                         document.getElementById(href.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else if (l === 'Feedback') {
+                      if (window.location.pathname !== '/') {
+                        e.preventDefault();
+                        window.history.pushState({}, '', '/');
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                        setTimeout(() => {
+                          document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      } else {
+                        e.preventDefault();
+                        document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' });
                       }
                     }
                   }}
@@ -2383,9 +2414,21 @@ function Footer() {
         <div>
           <h4 style={{ fontSize: '15px', fontWeight: 800, marginBottom: '24px', letterSpacing: '0.1em', color: COLORS.orange }}>EXPLORE</h4>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {['Search PGs', 'Roommate Match', 'Student Offers', 'College Guides'].map(item => (
-              <li key={item}><a href="#" style={{ color: '#94A3B8', textDecoration: 'none', fontSize: '15px', fontWeight: 500, transition: 'color 0.2s' }}>{item}</a></li>
+            {['Search PGs', 'Roommate Match', 'Student Offers', 'College Guides', 'Beta Feedback'].map(item => (
+              <li key={item}><a href={item === 'Beta Feedback' ? '#feedback' : '#'} onClick={(e) => {
+                if (item === 'Beta Feedback') {
+                  e.preventDefault();
+                  if (window.location.pathname !== '/') {
+                    window.history.pushState({}, '', '/');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                    setTimeout(() => document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                  } else {
+                    document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }} style={{ color: '#94A3B8', textDecoration: 'none', fontSize: '15px', fontWeight: 500, transition: 'color 0.2s' }}>{item}</a></li>
             ))}
+
           </ul>
         </div>
 
