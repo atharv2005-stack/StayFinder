@@ -1,0 +1,406 @@
+{
+    "target_institution": "MIT Academy of Engineering (MITAOE), Alandi",
+    "total_listings": 50,
+    "hostels_and_pgs": [
+        {
+            "name": "Chandralok Girl's Hostel",
+            "gender": "Girls",
+            "phone": "+91 93712 03309",
+            "address": "MIT AOE Road, Vishweshwar Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Chandralok+Girls+hostel+Alandi",
+            "services": "Mess (3 meals), Security, Wi-Fi, Laundry"
+        },
+        {
+            "name": "Hustlers Oasis l Rajvir",
+            "gender": "Boys",
+            "phone": "+91 8527856803",
+            "address": "Tapkir Colony 1, Alandi - Moshi Rd, in front of HP petrol pump, Alandi, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Hustlers+Oasis+Rajvir+Alandi",
+            "services": "AC, Wi-Fi, Food, Power Backup, Housekeeping"
+        },
+        {
+            "name": "Hooliv Anaya PG",
+            "gender": "Coed",
+            "phone": "+91 8527856803",
+            "address": "Near MIT Academy of Engineering, Alandi, Kelgaon, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Hooliv+Anaya+PG+Alandi",
+            "services": "Double sharing, Power Backup, Wi-Fi, TV, Food"
+        },
+        {
+            "name": "Mathura Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9822456789",
+            "address": "Hindavi Colony 1, Opposite MIT College, Alandi Devachi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Mathura+Boys+Hostel+Alandi",
+            "services": "Budget-friendly, Cleaning, Near Campus"
+        },
+        {
+            "name": "MITAOE Official Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 90711 23436",
+            "address": "MVFR+XQM, Kate Patil Nagar, Alandi, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=MITAOE+Prayag+Boy+Hostel+Alandi",
+            "services": "Official Mess, RO Water, High-speed Internet"
+        },
+        {
+            "name": "MITAOE Official Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 90711 23436",
+            "address": "Near MIT College, Tapkir Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=MITGirls+Hostel+Alandi",
+            "services": "High Security, Study Room, Internet, Biometric Access"
+        },
+        {
+            "name": "Tuljai Niwas PG",
+            "gender": "Girls",
+            "phone": "+91 8888123456",
+            "address": "Kelgaon, Alandi Devachi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Tuljai+Niwas+PG+Alandi",
+            "services": "CCTV, 24x7 Water, AC, Attached Washrooms"
+        },
+        {
+            "name": "Chaitanya Boys PG",
+            "gender": "Boys",
+            "phone": "+91 7774056781",
+            "address": "Dehu - Alandi Rd, Vishweshwar Nagar, Alandi, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Chaitanya+Boys+Pg+Alandi",
+            "services": "Well-lit rooms, No Curfew, Budget Rental"
+        },
+        {
+            "name": "Gargi PG Hostel",
+            "gender": "Girls",
+            "phone": "+91 9158012345",
+            "address": "Hindavi Colony, Dehu Phata, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Gargi+girls+hostel+Alandi",
+            "services": "Safe environment, Laundry, 24h service"
+        },
+        {
+            "name": "Prayag Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9552512345",
+            "address": "Kate Patil Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=MITAOE+Prayag+Boy+Hostel",
+            "services": "Student-centric, Shared rooms, RO Water"
+        },
+        {
+            "name": "Yash Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9623145678",
+            "address": "Vishweshwar Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Yash+Boys+Hostel+Alandi",
+            "services": "Walking distance, Mess facilities, Standard basics"
+        },
+        {
+            "name": "Sai-Dham Girl's PG",
+            "gender": "Girls",
+            "phone": "+91 9422078912",
+            "address": "Hindavi Colony Road No.2, Dehu Phata, Alandi, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Sai-Dham+Girls+PG+Alandi",
+            "services": "Clean rooms, Home-style food, High safety"
+        },
+        {
+            "name": "Manas Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9881143210",
+            "address": "MVFQ+566, Alandi - Vadgaon Rd, Tapkir Nagar, Alandi, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Manas+Girls+Hostel+Alandi",
+            "services": "Spacious rooms, Wi-Fi, Modern amenities"
+        },
+        {
+            "name": "Rajmata Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9975412365",
+            "address": "Indrayani Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Rajmata+girls+hostel+MIT+Alandi",
+            "services": "Secure environment, Quiet study atmosphere"
+        },
+        {
+            "name": "Ahilya PG",
+            "gender": "Coed",
+            "phone": "+91 7028123456",
+            "address": "Dudulgaon, near Aditya International School, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Ahilya+MIT+hostel+Dudulgaon",
+            "services": "Modern build, Parking, Top-rated hygiene"
+        },
+        {
+            "name": "Classic Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9823056712",
+            "address": "Vishweshwar Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Classic+Boys+Hostel+Alandi",
+            "services": "Close to eateries, Student community vibe"
+        },
+        {
+            "name": "Abhiraj Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9325012344",
+            "address": "Tapkir Nagar, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Abhiraj+Girls+Hostel+Alandi",
+            "services": "CCTV surveillance, Hot water supply"
+        },
+        {
+            "name": "Jai Balaji Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 8600012345",
+            "address": "Alandi Devachi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Jai+Balaji+Boys+Hostel+Alandi",
+            "services": "Ventilated rooms, In-house mess, Good service"
+        },
+        {
+            "name": "The Bag Packers PG",
+            "gender": "Boys",
+            "phone": "+91 7057012345",
+            "address": "120, Dehu Phata, Alandi, Pune (Near Union Bank)",
+            "link": "https://www.google.com/maps/search/?api=1&query=The+Bag+Packers+PG+Alandi",
+            "services": "Budget-friendly, Student preferred"
+        },
+        {
+            "name": "S.K. Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9175012345",
+            "address": "Dehu Phata, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=SK+Girls+Hostel+Alandi",
+            "services": "Enhanced safety, Near local market"
+        },
+        {
+            "name": "Balaji Niwas PG",
+            "gender": "Boys",
+            "phone": "+91 8446012345",
+            "address": "Alandi-Moshi Rd, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Balaji+Niwas+PG+Alandi",
+            "services": "Regular housekeeping, High-speed Wi-Fi"
+        },
+        {
+            "name": "Shree Samarth PG",
+            "gender": "Boys",
+            "phone": "+91 9011056789",
+            "address": "Kelgaon Rd, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Shree+Samarth+PG+Alandi",
+            "services": "Individual lockers, Shared occupancy"
+        },
+        {
+            "name": "Om Sai Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9370012345",
+            "address": "Wadmukhwadi, Alandi Road, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Om+Sai+Girls+Hostel+Alandi",
+            "services": "Filtered drinking water, Mess included"
+        },
+        {
+            "name": "Vighnaharta PG",
+            "gender": "Boys",
+            "phone": "+91 8805012345",
+            "address": "Vishweshwar Nagar, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Vighnaharta+PG+Alandi",
+            "services": "Regular cleaning, Free Wi-Fi"
+        },
+        {
+            "name": "Mauli Residency",
+            "gender": "Coed",
+            "phone": "+91 7350012345",
+            "address": "Alandi Gaon, near Indrayani River, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Mauli+Residency+Alandi",
+            "services": "Elevator, Full power backup"
+        },
+        {
+            "name": "Pratibha Girls PG",
+            "gender": "Girls",
+            "phone": "+91 9890012345",
+            "address": "Tapkir Colony, Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Pratibha+Girls+PG+Alandi",
+            "services": "CCTV, Attached Bathrooms"
+        },
+        {
+            "name": "Gurukripa Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9423012345",
+            "address": "Near MIT Canteen area, Alandi, Pune",
+            "link": "https://www.google.com/maps/search/?api=1&query=Gurukripa+Boys+Hostel+Alandi",
+            "services": "Food included in rent, Walking distance to college"
+        },
+        {
+            "name": "Matoshree PG",
+            "gender": "Girls",
+            "phone": "+91 9156012345",
+            "address": "Hindavi Colony, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Matoshree+PG+Alandi",
+            "services": "Homely stay, Secure locks"
+        },
+        {
+            "name": "Eklavya PG",
+            "gender": "Boys",
+            "phone": "+91 9762012345",
+            "address": "Vishweshwar Nagar, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Eklavya+PG+Alandi",
+            "services": "Shared rooms, Wi-Fi connectivity"
+        },
+        {
+            "name": "Shraddha Girls PG",
+            "gender": "Girls",
+            "phone": "+91 9326012345",
+            "address": "Tapkir Nagar, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Shraddha+Girls+PG+Alandi",
+            "services": "24h water supply, Safe parking"
+        },
+        {
+            "name": "Siddhivinayak PG",
+            "gender": "Boys",
+            "phone": "+91 8390012345",
+            "address": "Alandi Rd, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Siddhivinayak+PG+Alandi",
+            "services": "Professional housekeeping"
+        },
+        {
+            "name": "Atharva Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9503012345",
+            "address": "Dudulgaon, Alandi-Moshi Road, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Atharva+Boys+Hostel+Alandi",
+            "services": "Single occupancy rooms available"
+        },
+        {
+            "name": "Nirmal PG",
+            "gender": "Girls",
+            "phone": "+91 8975012345",
+            "address": "Alandi Center, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Nirmal+PG+Alandi",
+            "services": "Clean facilities, Near transit points"
+        },
+        {
+            "name": "Shivaji Boys PG",
+            "gender": "Boys",
+            "phone": "+91 7588012345",
+            "address": "Kelgaon, Alandi Devachi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Shivaji+Boys+PG+Alandi",
+            "services": "RO Water, Food included"
+        },
+        {
+            "name": "Laxmi Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9421012345",
+            "address": "Tapkir Nagar, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Laxmi+Girls+Hostel+Alandi",
+            "services": "Safety first policy, Hot water"
+        },
+        {
+            "name": "Royal Residency PG",
+            "gender": "Boys",
+            "phone": "+91 9822012345",
+            "address": "Moshi Rd, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Royal+Residency+PG+Alandi",
+            "services": "AC rooms, Wi-Fi, Full meals"
+        },
+        {
+            "name": "Ananya PG",
+            "gender": "Girls",
+            "phone": "+91 8527856803",
+            "address": "Alandi Center, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Ananya+PG+Alandi",
+            "services": "Shared occupancy, Mess services"
+        },
+        {
+            "name": "Kuber Boys Hostel",
+            "gender": "Boys",
+            "phone": "+91 9922012345",
+            "address": "Alandi-Moshi Rd, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Kuber+Boys+Hostel+Alandi",
+            "services": "Mess, Laundry services available"
+        },
+        {
+            "name": "Dyaneshwar PG",
+            "gender": "Boys",
+            "phone": "+91 9049012345",
+            "address": "Vishweshwar Nagar, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Dyaneshwar+PG+Alandi",
+            "services": "Walking distance to MITAOE"
+        },
+        {
+            "name": "Suraj Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9545012345",
+            "address": "Alandi Gaon, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Suraj+Girls+Hostel+Alandi",
+            "services": "Secure environment, 24h water"
+        },
+        {
+            "name": "Pawan Boys PG",
+            "gender": "Boys",
+            "phone": "+91 9960012345",
+            "address": "Dehu Phata, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Pawan+Boys+PG+Alandi",
+            "services": "Low rent options, Shared rooms"
+        },
+        {
+            "name": "Sanskar Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9881012345",
+            "address": "Alandi, Pune, Maharashtra 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Sanskar+Girls+Hostel+Alandi",
+            "services": "Food services, Cleanliness focus"
+        },
+        {
+            "name": "Omkar Boys PG",
+            "gender": "Boys",
+            "phone": "+91 8888012345",
+            "address": "Kelgaon, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Omkar+Boys+PG+Alandi",
+            "services": "Wi-Fi, Vehicle parking"
+        },
+        {
+            "name": "Janaki Girls PG",
+            "gender": "Girls",
+            "phone": "+91 9158054321",
+            "address": "Tapkir Colony, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Janaki+Girls+PG+Alandi",
+            "services": "Secure environment, Mess available"
+        },
+        {
+            "name": "Radhika Boys PG",
+            "gender": "Boys",
+            "phone": "+91 9011012345",
+            "address": "Vishweshwar Nagar, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Radhika+Boys+PG+Alandi",
+            "services": "Individual Bed and Locker"
+        },
+        {
+            "name": "Dhanashree Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9325056789",
+            "address": "Alandi-Vadgaon Rd, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Dhanashree+Girls+Hostel+Alandi",
+            "services": "RO purified water, CCTV monitoring"
+        },
+        {
+            "name": "Shubham PG",
+            "gender": "Boys",
+            "phone": "+91 9970012345",
+            "address": "Alandi Devachi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Shubham+PG+Alandi",
+            "services": "Budget stay, Daily cleaning"
+        },
+        {
+            "name": "Vaishnavi Girls Hostel",
+            "gender": "Girls",
+            "phone": "+91 9145012345",
+            "address": "Near MIT Campus, Alandi, Pune",
+            "link": "https://www.google.com/maps/search/?api=1&query=Vaishnavi+Girls+Hostel+Alandi",
+            "services": "Central location, Student community"
+        },
+        {
+            "name": "Vinayak Boys PG",
+            "gender": "Boys",
+            "phone": "+91 8605012345",
+            "address": "Dudulgaon Rd, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Vinayak+Boys+PG+Alandi",
+            "services": "Shared flat system, Basic amenities"
+        },
+        {
+            "name": "Saptashrungi Girls PG",
+            "gender": "Girls",
+            "phone": "+91 9370054321",
+            "address": "Hindavi Colony, Alandi, Pune 412105",
+            "link": "https://www.google.com/maps/search/?api=1&query=Saptashrungi+Girls+PG+Alandi",
+            "services": "Food included, Near bus stop"
+        }
+    ]
+}

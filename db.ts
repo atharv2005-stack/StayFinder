@@ -14,7 +14,7 @@ if (!admin.apps.length) {
     } 
     // 2. Fallback to Local JSON File (Development)
     else {
-      const localKeyPath = join(process.cwd(), 'stayfinder-eb507-firebase-adminsdk-fbsvc-b58e13bb59.json');
+      const localKeyPath = join(process.cwd(), 'stayfinder-eb507-firebase-adminsdk-fbsvc-e68af7ab99.json');
       if (existsSync(localKeyPath)) {
         serviceAccount = JSON.parse(readFileSync(localKeyPath, 'utf8'));
       } else {
@@ -59,6 +59,35 @@ export interface IFeedback {
   createdAt: any;
 }
 
+export interface IPGListing {
+  id?: string;
+  name: string;
+  address: string;
+  distance_km: number;
+  price_per_month: number;
+  room_type: string;
+  amenities: string[];
+  contact: string;
+  phone?: string;
+  rating: number;
+  gender: string;
+  maps_link?: string;
+  verified?: boolean;
+  source?: string;
+  description?: string;
+  // Landlord-specific fields
+  ownerId?: string;
+  ownerName?: string;
+  deposit?: number;
+  sharing?: number;
+  availableFrom?: string;
+  rules?: string[];
+  status?: 'Active' | 'Pending' | 'Booked';
+  views?: number;
+  createdAt?: any;
+  updatedAt?: any;
+}
+
 // Helper function
 export const getDb = async () => {
   return db;
@@ -67,3 +96,4 @@ export const getDb = async () => {
 // Firestore Collection References
 export const UserCollection = db.collection('users');
 export const FeedbackCollection = db.collection('feedbacks');
+export const PGCollection = db.collection('pgs');

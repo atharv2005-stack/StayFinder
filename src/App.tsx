@@ -35,8 +35,12 @@ interface PG {
   room_type: string;
   amenities: string[];
   contact: string;
+  phone?: string;
   rating: number;
   gender: string;
+  maps_link?: string;
+  description?: string;
+  source?: string;
   // UI Helpers mapped from JSON
   rent: number;
   distance: number;
@@ -128,16 +132,14 @@ export default function App() {
 
   useEffect(() => {
     // Process and load the local JSON data
-    const processedData = rawPgData.map((item, index) => ({
+    const processedData = (rawPgData as any[]).map((item, index) => ({
       ...item,
-      id: `pg-${index}`,
-      rent: item.price_per_month,
-      distance: item.distance_km,
-      facilities: item.amenities,
-      // Assign deterministic but varied colors based on name
+      id: item.id || `pg-${index}`,
+      rent: item.price_per_month || item.rent,
+      distance: item.distance_km || item.distance,
+      facilities: item.amenities || item.facilities || ['Wi-Fi'],
+      maps_link: item.maps_link || null,
       colors: item.gender === 'Boys' ? ["#4FACFE", "#00F2FE"] : item.gender === 'Girls' ? ["#FF758C", "#FF7EB3"] : ["#43E97B", "#38F9D7"],
-      // Default coordinates near MITAOE for map view since JSON lacks them
-      // We'll vary them slightly so markers don't overlap perfectly
       coordinates: { 
         lat: 18.6651 + (Math.random() - 0.5) * 0.02, 
         lng: 73.8860 + (Math.random() - 0.5) * 0.02 
@@ -209,7 +211,8 @@ export default function App() {
           id: item.id || `pg-${index}`,
           rent: item.price_per_month || item.rent,
           distance: item.distance_km || item.distance,
-          facilities: item.amenities || item.facilities || ["WiFi"],
+          facilities: item.amenities || item.facilities || ['Wi-Fi'],
+          maps_link: item.maps_link || null,
           colors: item.gender === 'Boys' ? ["#4FACFE", "#00F2FE"] : item.gender === 'Girls' ? ["#FF758C", "#FF7EB3"] : ["#43E97B", "#38F9D7"],
           coordinates: { lat: 18.6651 + (Math.random() - 0.5) * 0.02, lng: 73.8860 + (Math.random() - 0.5) * 0.02 }
         }));
@@ -1286,21 +1289,59 @@ function PGCard({ pg, isSelected, onCompare, onBook }: PGCardProps) {
           {pg.facilities.length > 3 && <span style={{ fontSize: '11px', fontWeight: 700, alignSelf: 'center' }}>+{pg.facilities.length - 3}</span>}
         </div>
         
-        <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <span style={{ fontSize: '22px', fontWeight: 900, color: COLORS.orange }}>₹{pg.rent.toLocaleString()}</span>
-            <span style={{ fontSize: '12px', color: COLORS.text2, fontWeight: 700 }}>/mo</span>
+        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <span style={{ fontSize: '22px', fontWeight: 900, color: COLORS.orange }}>₹{pg.rent.toLocaleString()}</span>
+              <span style={{ fontSize: '12px', color: COLORS.text2, fontWeight: 700 }}>/mo</span>
+            </div>
+            {pg.verified && (
+              <span style={{ fontSize: '10px', fontWeight: 800, background: '#DCFCE7', color: '#16A34A', padding: '4px 10px', borderRadius: '100px' }}>✓ Verified</span>
+            )}
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button 
-              onClick={() => window.open(`tel:${pg.contact}`)}
-              style={{ background: 'white', color: COLORS.dark, border: `2px solid ${COLORS.dark}`, padding: '10px 18px', borderRadius: '14px', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+          {/* Responsive 3-button row: Call | Maps | Details */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <a
+              href={`tel:${pg.phone || pg.contact}`}
+              onClick={e => e.stopPropagation()}
+              style={{
+                flex: 1, minWidth: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                background: '#F0FDF4', color: '#16A34A', border: '2px solid #16A34A',
+                padding: '10px 10px', borderRadius: '12px', fontWeight: 800, fontSize: '12px',
+                cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s'
+              }}
+              onMouseOver={e => { e.currentTarget.style.background = '#16A34A'; e.currentTarget.style.color = 'white'; }}
+              onMouseOut={e => { e.currentTarget.style.background = '#F0FDF4'; e.currentTarget.style.color = '#16A34A'; }}
             >
-              Contact
-            </button>
-            <button 
-              onClick={onBook} 
-              style={{ background: COLORS.dark, color: COLORS.white, border: 'none', padding: '12px 20px', borderRadius: '14px', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+              📞 Call
+            </a>
+            {pg.maps_link ? (
+              <a
+                href={pg.maps_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                style={{
+                  flex: 1, minWidth: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                  background: '#EFF6FF', color: '#2563EB', border: '2px solid #2563EB',
+                  padding: '10px 10px', borderRadius: '12px', fontWeight: 800, fontSize: '12px',
+                  cursor: 'pointer', textDecoration: 'none', transition: 'all 0.2s'
+                }}
+                onMouseOver={e => { e.currentTarget.style.background = '#2563EB'; e.currentTarget.style.color = 'white'; }}
+                onMouseOut={e => { e.currentTarget.style.background = '#EFF6FF'; e.currentTarget.style.color = '#2563EB'; }}
+              >
+                📍 Maps
+              </a>
+            ) : null}
+            <button
+              onClick={onBook}
+              style={{
+                flex: 1, minWidth: '70px', background: COLORS.dark, color: COLORS.white,
+                border: 'none', padding: '10px 10px', borderRadius: '12px',
+                fontWeight: 800, fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+              onMouseOver={e => { e.currentTarget.style.background = COLORS.orange; }}
+              onMouseOut={e => { e.currentTarget.style.background = COLORS.dark; }}
             >
               Details
             </button>
@@ -1571,8 +1612,9 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
   const handleNext = () => setStep(s => s + 1);
   const handlePrev = () => setStep(s => s - 1);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const address = `${form.area}, ${form.city}`;
     const newPG: LandlordPG = {
       ...form as LandlordPG,
       id: Date.now().toString(),
@@ -1582,13 +1624,50 @@ function LandlordSection({ listings, onAdd, onDelete, isMobile }: LandlordSectio
       facilities: form.facilities || [],
       colors: [COLORS.dark, COLORS.orange],
       coordinates: { lat: 18.6651, lng: 73.8860 },
-      rating: 5.0,
-      address: `${form.area}, ${form.city}`,
+      rating: 4.0,
+      address,
       contact: form.phone || '',
       room_type: form.roomType || 'Private',
       status: 'Active'
     };
-    onAdd(newPG);
+
+    // POST to backend Firestore so it persists for all users
+    try {
+      const authToken = localStorage.getItem('token') || '';
+      const response = await fetch('/api/pgs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+        },
+        body: JSON.stringify({
+          name: form.name,
+          address,
+          price_per_month: form.rent || 0,
+          room_type: form.roomType || 'Private',
+          amenities: form.facilities || [],
+          contact: form.phone || '',
+          phone: form.phone || '',
+          gender: form.gender || 'Boys',
+          ownerName: form.ownerName || '',
+          deposit: form.deposit || 0,
+          sharing: form.sharing || 1,
+          availableFrom: form.availableFrom || '',
+          rules: form.rules || []
+        })
+      });
+      if (response.ok) {
+        const saved = await response.json();
+        onAdd({ ...newPG, id: saved.id });
+      } else {
+        // Fallback: store locally
+        onAdd(newPG);
+      }
+    } catch (err) {
+      console.warn('Backend POST failed, storing locally:', err);
+      onAdd(newPG);
+    }
+
     setShowSuccess(true);
     setTimeout(() => {
       setShowSuccess(false);
@@ -2203,16 +2282,51 @@ function BookingModal({ isOpen, onClose, pg, isMobile }: BookingModalProps) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Header Info */}
           <div style={{ padding: '24px', background: `linear-gradient(135deg, ${pg.colors[0]}22, ${pg.colors[1]}22)`, borderRadius: '24px', border: `1px solid ${pg.colors[0]}44` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <h4 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark }}>{pg.name}</h4>
-                <p style={{ fontSize: '14px', color: COLORS.text2, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <MapPin size={14} /> {pg.address} · {pg.distance} km from college
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                  <h4 style={{ fontSize: '22px', fontWeight: 900, color: COLORS.dark, margin: 0 }}>{pg.name}</h4>
+                  {pg.verified && <span style={{ fontSize: '10px', fontWeight: 800, background: '#DCFCE7', color: '#16A34A', padding: '3px 8px', borderRadius: '100px', whiteSpace: 'nowrap' }}>✓ Verified</span>}
+                </div>
+                <p style={{ fontSize: '13px', color: COLORS.text2, display: 'flex', alignItems: 'center', gap: '4px', margin: '0 0 12px' }}>
+                  <MapPin size={13} /> {pg.address} · {pg.distance} km from college
                 </p>
+                {/* Responsive contact buttons inside modal header */}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <a
+                    href={`tel:${pg.phone || pg.contact}`}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '5px',
+                      background: '#F0FDF4', color: '#16A34A', border: '1.5px solid #16A34A',
+                      padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
+                      textDecoration: 'none', transition: 'all 0.2s'
+                    }}
+                  >
+                    📞 {pg.phone || pg.contact}
+                  </a>
+                  {pg.maps_link && (
+                    <a
+                      href={pg.maps_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '5px',
+                        background: '#EFF6FF', color: '#2563EB', border: '1.5px solid #2563EB',
+                        padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
+                        textDecoration: 'none', transition: 'all 0.2s'
+                      }}
+                    >
+                      📍 Open in Maps
+                    </a>
+                  )}
+                </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ fontSize: '24px', fontWeight: 900, color: COLORS.orange }}>₹{pg.rent.toLocaleString()}</p>
-                <p style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2 }}>MONTHLY RENT</p>
+                <p style={{ fontSize: '26px', fontWeight: 900, color: COLORS.orange, margin: 0 }}>₹{pg.rent.toLocaleString()}</p>
+                <p style={{ fontSize: '11px', fontWeight: 800, color: COLORS.text2, margin: 0 }}>MONTHLY RENT</p>
+                {pg.description && (
+                  <p style={{ fontSize: '11px', color: COLORS.text2, marginTop: '6px', maxWidth: '180px', lineHeight: 1.4 }}>{pg.description.slice(0, 80)}…</p>
+                )}
               </div>
             </div>
           </div>

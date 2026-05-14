@@ -42,6 +42,5 @@ lerna-debug.log*
 .cache
 .temp
 
-# Firebase keys
-*-firebase-adminsdk-*.json
-serviceAccountKey.json
+stayfinder-eb507-firebase-adminsdk-fbsvc-e68af7ab99.json
+

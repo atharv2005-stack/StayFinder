@@ -4,7 +4,7 @@ dotenv.config();
 import path from "path";
 import axios from "axios";
 import { GoogleGenAI } from "@google/genai";
-import { getDb, UserCollection, FeedbackCollection } from "./db.js";
+import { getDb, UserCollection, FeedbackCollection, PGCollection } from "./db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
@@ -200,17 +200,75 @@ app.get("/api/feedback", async (req, res) => {
   }
 });
 
-// API endpoint to fetch pgs
+// GET /api/pgs - Merge local seed data + landlord-submitted PGs from Firestore
 app.get("/api/pgs", async (req, res) => {
   try {
+    // Load local seed (real MITAOE data)
     const dataPath = path.join(process.cwd(), "mitaoe_pg_listings.json");
     const dataStr = await fs.readFile(dataPath, "utf-8");
-    const pgs = JSON.parse(dataStr);
-    
-    res.json(pgs);
+    const localPGs = JSON.parse(dataStr);
+
+    // Load landlord-submitted PGs from Firestore
+    let firestorePGs: any[] = [];
+    try {
+      const pgSnapshot = await PGCollection.orderBy('createdAt', 'desc').get();
+      firestorePGs = pgSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id, source: 'landlord' }));
+    } catch (dbErr) {
+      console.warn("Firestore PG fetch failed, serving local only:", dbErr);
+    }
+
+    // Combine: local seed first, then landlord listings
+    const allPGs = [...localPGs, ...firestorePGs];
+    res.json(allPGs);
   } catch (error) {
     console.error("Error serving PGs:", error);
     res.status(500).json({ error: "Failed to fetch pgs" });
+  }
+});
+
+// POST /api/pgs - Authenticated landlord submits a new PG listing to Firestore
+app.post("/api/pgs", authenticateToken, async (req: any, res) => {
+  try {
+    const {
+      name, address, price_per_month, room_type, amenities, contact,
+      phone, gender, description, ownerName, deposit, sharing, availableFrom, rules
+    } = req.body;
+
+    if (!name || !address || !price_per_month || !gender) {
+      return res.status(400).json({ error: "Name, address, price and gender are required" });
+    }
+
+    const pgData = {
+      name,
+      address: address || '',
+      distance_km: 0,
+      price_per_month: Number(price_per_month) || 0,
+      room_type: room_type || 'Double Sharing',
+      amenities: amenities || [],
+      contact: contact || phone || '',
+      phone: phone || contact || '',
+      rating: 4.0,
+      gender,
+      description: description || '',
+      maps_link: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
+      verified: false,
+      source: 'landlord',
+      ownerName: ownerName || '',
+      ownerId: req.user.id,
+      deposit: Number(deposit) || 0,
+      sharing: Number(sharing) || 1,
+      availableFrom: availableFrom || '',
+      rules: rules || [],
+      status: 'Active',
+      views: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    const docRef = await PGCollection.add(pgData);
+    res.status(201).json({ id: docRef.id, ...pgData });
+  } catch (error) {
+    console.error("Error creating PG listing:", error);
+    res.status(500).json({ error: "Failed to create PG listing" });
   }
 });
 
